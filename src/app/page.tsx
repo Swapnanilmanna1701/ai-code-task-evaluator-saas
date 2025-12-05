@@ -1,0 +1,389 @@
+"use client";
+
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+  Code2,
+  Sparkles,
+  Shield,
+  Zap,
+  CheckCircle2,
+  ArrowRight,
+  Star,
+  FileCode,
+  TrendingUp,
+  Lock,
+  CreditCard,
+} from "lucide-react";
+
+const features = [
+  {
+    icon: FileCode,
+    title: "Submit Your Code",
+    description: "Upload any coding task in JavaScript, Python, TypeScript, and more.",
+  },
+  {
+    icon: Sparkles,
+    title: "AI Analysis",
+    description: "Our AI evaluates your code for quality, best practices, and efficiency.",
+  },
+  {
+    icon: TrendingUp,
+    title: "Get Feedback",
+    description: "Receive a score, strengths, and actionable improvement suggestions.",
+  },
+  {
+    icon: Lock,
+    title: "Unlock Details",
+    description: "Pay to access comprehensive detailed feedback and recommendations.",
+  },
+];
+
+const benefits = [
+  "Score from 0-100 based on code quality",
+  "Identify strengths in your code",
+  "Get specific improvement suggestions",
+  "Receive detailed analysis (premium)",
+  "Track your progress over time",
+  "Support for 15+ languages",
+];
+
+const testimonials = [
+  {
+    name: "Sarah Chen",
+    role: "Software Engineer",
+    content: "TaskEval helped me identify blind spots in my code I never knew existed. The AI feedback is incredibly insightful.",
+    rating: 5,
+  },
+  {
+    name: "Marcus Johnson",
+    role: "CS Student",
+    content: "As a student, this tool has been invaluable for improving my coding skills. The detailed reports are worth every penny.",
+    rating: 5,
+  },
+  {
+    name: "Emily Rodriguez",
+    role: "Full Stack Developer",
+    content: "I use TaskEval before every code review. It catches issues and suggests improvements I might have missed.",
+    rating: 5,
+  },
+];
+
+export default function HomePage() {
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white dark:from-slate-950 dark:to-slate-900">
+      {/* Header */}
+      <header className="sticky top-0 z-50 w-full border-b bg-white/80 backdrop-blur-sm dark:bg-slate-950/80 dark:border-slate-800">
+        <div className="container mx-auto px-4">
+          <div className="flex h-16 items-center justify-between">
+            <Link href="/" className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                <Code2 className="w-5 h-5 text-primary-foreground" />
+              </div>
+              <span className="text-xl font-bold">TaskEval</span>
+            </Link>
+            <div className="flex items-center gap-4">
+              <Link href="/login">
+                <Button variant="ghost">Sign In</Button>
+              </Link>
+              <Link href="/signup">
+                <Button>Get Started</Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Hero Section */}
+      <section className="py-20 md:py-32">
+        <div className="container mx-auto px-4 text-center">
+          <Badge className="mb-4" variant="secondary">
+            <Sparkles className="w-3 h-3 mr-1" />
+            AI-Powered Code Evaluation
+          </Badge>
+          <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6 max-w-4xl mx-auto">
+            Get Expert Feedback on Your Code in{" "}
+            <span className="text-primary">Seconds</span>
+          </h1>
+          <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+            Submit your coding tasks and receive AI-powered evaluation with scores,
+            strengths, and actionable improvement suggestions.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link href="/signup">
+              <Button size="lg" className="gap-2 text-lg px-8">
+                Start Free Evaluation
+                <ArrowRight className="w-5 h-5" />
+              </Button>
+            </Link>
+            <Link href="/login">
+              <Button size="lg" variant="outline" className="text-lg px-8">
+                Sign In
+              </Button>
+            </Link>
+          </div>
+          <p className="text-sm text-muted-foreground mt-4">
+            No credit card required • Free evaluation preview
+          </p>
+        </div>
+      </section>
+
+      {/* How It Works */}
+      <section className="py-20 bg-slate-50 dark:bg-slate-900/50">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">How It Works</h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Get professional code feedback in four simple steps
+            </p>
+          </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {features.map((feature, index) => {
+              const Icon = feature.icon;
+              return (
+                <Card key={index} className="relative border-0 shadow-lg">
+                  <CardHeader>
+                    <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
+                      <Icon className="w-6 h-6 text-primary" />
+                    </div>
+                    <div className="absolute top-4 right-4 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-sm font-bold text-primary">
+                      {index + 1}
+                    </div>
+                    <CardTitle className="text-xl">{feature.title}</CardTitle>
+                    <CardDescription className="text-base">
+                      {feature.description}
+                    </CardDescription>
+                  </CardHeader>
+                </Card>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Benefits */}
+      <section className="py-20">
+        <div className="container mx-auto px-4">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <h2 className="text-3xl md:text-4xl font-bold mb-6">
+                Everything You Need to Improve Your Code
+              </h2>
+              <p className="text-lg text-muted-foreground mb-8">
+                Our AI-powered evaluation provides comprehensive feedback to help you
+                write better, more maintainable code.
+              </p>
+              <ul className="space-y-4">
+                {benefits.map((benefit, index) => (
+                  <li key={index} className="flex items-center gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0" />
+                    <span>{benefit}</span>
+                  </li>
+                ))}
+              </ul>
+              <div className="mt-8">
+                <Link href="/signup">
+                  <Button size="lg" className="gap-2">
+                    Try It Now
+                    <ArrowRight className="w-4 h-4" />
+                  </Button>
+                </Link>
+              </div>
+            </div>
+            <div className="relative">
+              <Card className="border-0 shadow-2xl">
+                <CardHeader className="bg-slate-900 text-white rounded-t-lg">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-red-500" />
+                    <div className="w-3 h-3 rounded-full bg-yellow-500" />
+                    <div className="w-3 h-3 rounded-full bg-green-500" />
+                    <span className="ml-2 text-sm opacity-60">evaluation.json</span>
+                  </div>
+                </CardHeader>
+                <CardContent className="bg-slate-950 text-slate-50 p-6 rounded-b-lg font-mono text-sm">
+                  <pre className="overflow-x-auto">
+{`{
+  "score": 85,
+  "strengths": [
+    "Clean code structure",
+    "Good naming conventions",
+    "Efficient algorithm"
+  ],
+  "improvements": [
+    "Add error handling",
+    "Consider edge cases",
+    "Add comments"
+  ]
+}`}
+                  </pre>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing */}
+      <section className="py-20 bg-slate-50 dark:bg-slate-900/50">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Simple Pricing</h2>
+            <p className="text-lg text-muted-foreground">
+              Free preview • Pay only for detailed reports
+            </p>
+          </div>
+          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            <Card className="border-2">
+              <CardHeader>
+                <CardTitle className="text-2xl">Free Preview</CardTitle>
+                <CardDescription>Perfect for quick evaluations</CardDescription>
+                <div className="text-4xl font-bold mt-4">$0</div>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-3">
+                  {[
+                    "Overall score (0-100)",
+                    "Top 3 strengths",
+                    "Top 3 improvements",
+                    "Unlimited evaluations",
+                  ].map((item, i) => (
+                    <li key={i} className="flex items-center gap-2">
+                      <CheckCircle2 className="w-4 h-4 text-green-500" />
+                      <span className="text-sm">{item}</span>
+                    </li>
+                  ))}
+                </ul>
+                <Link href="/signup" className="block mt-6">
+                  <Button variant="outline" className="w-full">
+                    Get Started Free
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+            <Card className="border-2 border-primary relative">
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                <Badge className="bg-primary">Most Popular</Badge>
+              </div>
+              <CardHeader>
+                <CardTitle className="text-2xl">Full Report</CardTitle>
+                <CardDescription>Complete detailed analysis</CardDescription>
+                <div className="text-4xl font-bold mt-4">
+                  $4.99
+                  <span className="text-base font-normal text-muted-foreground">
+                    /report
+                  </span>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-3">
+                  {[
+                    "Everything in Free",
+                    "Detailed code analysis",
+                    "Specific recommendations",
+                    "Performance optimization tips",
+                    "Lifetime access to report",
+                  ].map((item, i) => (
+                    <li key={i} className="flex items-center gap-2">
+                      <CheckCircle2 className="w-4 h-4 text-green-500" />
+                      <span className="text-sm">{item}</span>
+                    </li>
+                  ))}
+                </ul>
+                <Link href="/signup" className="block mt-6">
+                  <Button className="w-full gap-2">
+                    <CreditCard className="w-4 h-4" />
+                    Unlock Full Reports
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials */}
+      <section className="py-20">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              Loved by Developers
+            </h2>
+            <p className="text-lg text-muted-foreground">
+              See what others are saying about TaskEval
+            </p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-8">
+            {testimonials.map((testimonial, index) => (
+              <Card key={index} className="border-0 shadow-lg">
+                <CardContent className="pt-6">
+                  <div className="flex gap-1 mb-4">
+                    {[...Array(testimonial.rating)].map((_, i) => (
+                      <Star
+                        key={i}
+                        className="w-5 h-5 fill-yellow-400 text-yellow-400"
+                      />
+                    ))}
+                  </div>
+                  <p className="text-muted-foreground mb-4">
+                    &quot;{testimonial.content}&quot;
+                  </p>
+                  <div>
+                    <div className="font-semibold">{testimonial.name}</div>
+                    <div className="text-sm text-muted-foreground">
+                      {testimonial.role}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="py-20 bg-primary text-primary-foreground">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+            Ready to Improve Your Code?
+          </h2>
+          <p className="text-xl opacity-90 mb-8 max-w-2xl mx-auto">
+            Join thousands of developers who are writing better code with TaskEval.
+          </p>
+          <Link href="/signup">
+            <Button
+              size="lg"
+              variant="secondary"
+              className="text-lg px-8 gap-2"
+            >
+              Get Started for Free
+              <ArrowRight className="w-5 h-5" />
+            </Button>
+          </Link>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="py-12 border-t">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                <Code2 className="w-5 h-5 text-primary-foreground" />
+              </div>
+              <span className="font-bold">TaskEval</span>
+            </div>
+            <div className="flex items-center gap-6 text-sm text-muted-foreground">
+              <span>© 2024 TaskEval. All rights reserved.</span>
+            </div>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Shield className="w-4 h-4" />
+              <span>Secure & Private</span>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+}
