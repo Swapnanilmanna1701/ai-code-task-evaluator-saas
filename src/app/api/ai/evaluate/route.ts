@@ -1,88 +1,107 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { GoogleGenAI, Type } from '@google/genai';
 import { db } from '@/db';
 import { tasks, evaluations } from '@/db/schema';
 import { eq, and } from 'drizzle-orm';
 import { getCurrentUser } from '@/lib/auth';
 
-// AI Evaluation using OpenAI-compatible API (works with OpenAI, Groq, etc.)
+// Initialize Gemini AI
+const genAI = new GoogleGenAI({
+  apiKey: process.env.GOOGLE_GEMINI_API_KEY || '',
+});
+
+// Define schema for structured output
+const evaluationSchema = {
+  type: Type.OBJECT,
+  description: 'Code evaluation result',
+  properties: {
+    score: {
+      type: Type.NUMBER,
+      description: 'Code quality score from 0-100',
+      nullable: false,
+    },
+    strengths: {
+      type: Type.ARRAY,
+      description: 'Array of 4-5 specific strengths as detailed strings',
+      nullable: false,
+      items: { type: Type.STRING },
+    },
+    improvements: {
+      type: Type.ARRAY,
+      description: 'Array of 3-4 specific improvement suggestions as detailed strings',
+      nullable: false,
+      items: { type: Type.STRING },
+    },
+    detailedFeedback: {
+      type: Type.STRING,
+      description: 'Comprehensive 3-4 paragraph analysis covering code quality, best practices, performance, and recommendations',
+      nullable: false,
+    },
+  },
+  required: ['score', 'strengths', 'improvements', 'detailedFeedback'],
+};
+
+// AI Evaluation using Google Gemini API
 async function evaluateCode(code: string, language: string | null, title: string, description: string | null) {
-  const systemPrompt = `You are an expert code reviewer and evaluator. Analyze the provided code and return a JSON evaluation with the following structure:
-{
-  "score": <number between 0-100>,
-  "strengths": [<array of 3-5 specific strengths as strings>],
-  "improvements": [<array of 3-5 specific improvement suggestions as strings>],
-  "detailedFeedback": "<comprehensive 2-3 paragraph analysis covering code quality, best practices, performance, and recommendations>"
-}
-
-Be specific, constructive, and helpful in your feedback. Consider:
-- Code structure and organization
-- Naming conventions and readability
-- Error handling
-- Performance considerations
-- Best practices for the language
-- Potential bugs or issues`;
-
-  const userPrompt = `Please evaluate this ${language || 'code'} code:
-
-Title: ${title}
-${description ? `Description: ${description}` : ''}
-
-Code:
-\`\`\`${language || ''}
-${code}
-\`\`\`
-
-Provide your evaluation in the JSON format specified.`;
-
-  // Check if we have an API key configured
-  const apiKey = process.env.OPENAI_API_KEY || process.env.GROQ_API_KEY;
-  const baseUrl = process.env.GROQ_API_KEY 
-    ? 'https://api.groq.com/openai/v1'
-    : 'https://api.openai.com/v1';
-  const model = process.env.GROQ_API_KEY 
-    ? 'llama-3.1-70b-versatile'
-    : 'gpt-4o-mini';
+  const apiKey = process.env.GOOGLE_GEMINI_API_KEY;
 
   if (!apiKey) {
-    // Return mock evaluation if no API key
+    console.log('No Gemini API key configured, using mock evaluation');
     return generateMockEvaluation(code, language);
   }
 
   try {
-    const response = await fetch(`${baseUrl}/chat/completions`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`,
+    const model = genAI.models.generateContent({
+      model: 'gemini-2.0-flash',
+      contents: `You are an expert code reviewer and evaluator. Analyze the provided ${language || 'code'} code and provide a comprehensive evaluation.
+
+Title: ${title}
+${description ? `Description: ${description}` : ''}
+
+Code to evaluate:
+\`\`\`${language || ''}
+${code}
+\`\`\`
+
+Evaluate the code thoroughly considering:
+1. Code structure and organization
+2. Naming conventions and readability
+3. Error handling and edge cases
+4. Performance considerations
+5. Best practices for ${language || 'the language'}
+6. Potential bugs or issues
+7. Security considerations
+8. Maintainability and scalability
+
+Provide:
+- A score from 0-100 based on overall code quality
+- 4-5 specific strengths (what the code does well)
+- 3-4 specific improvement suggestions (actionable recommendations)
+- A detailed 3-4 paragraph feedback covering all aspects of the code
+
+Be specific, constructive, and helpful in your feedback.`,
+      config: {
+        responseMimeType: 'application/json',
+        responseSchema: evaluationSchema,
       },
-      body: JSON.stringify({
-        model,
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: userPrompt },
-        ],
-        temperature: 0.7,
-        max_tokens: 2000,
-      }),
     });
 
-    if (!response.ok) {
-      console.error('AI API error:', await response.text());
+    const result = await model;
+    const responseText = result.text;
+
+    if (!responseText) {
+      console.error('Empty response from Gemini');
       return generateMockEvaluation(code, language);
     }
 
-    const data = await response.json();
-    const content = data.choices[0]?.message?.content;
-
-    // Parse JSON from response
-    const jsonMatch = content.match(/\{[\s\S]*\}/);
-    if (jsonMatch) {
-      return JSON.parse(jsonMatch[0]);
-    }
-
-    return generateMockEvaluation(code, language);
+    const evaluation = JSON.parse(responseText);
+    
+    // Validate and normalize score
+    evaluation.score = Math.min(100, Math.max(0, Math.round(evaluation.score)));
+    
+    return evaluation;
   } catch (error) {
-    console.error('AI evaluation error:', error);
+    console.error('Gemini AI evaluation error:', error);
     return generateMockEvaluation(code, language);
   }
 }
