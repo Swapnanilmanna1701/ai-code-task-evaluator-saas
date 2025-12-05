@@ -173,16 +173,16 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { taskId, code, language, title, description } = body;
+    const { taskId } = body;
 
-    if (!taskId || !code) {
+    if (!taskId) {
       return NextResponse.json(
-        { error: 'Task ID and code are required' },
+        { error: 'Task ID is required' },
         { status: 400 }
       );
     }
 
-    // Verify task belongs to user
+    // Verify task belongs to user and get task data
     const task = await db
       .select()
       .from(tasks)
@@ -193,6 +193,16 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: 'Task not found' },
         { status: 404 }
+      );
+    }
+
+    const taskData = task[0];
+
+    // Check if task has code content
+    if (!taskData.codeContent) {
+      return NextResponse.json(
+        { error: 'Task has no code content to evaluate' },
+        { status: 400 }
       );
     }
 
@@ -210,8 +220,19 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Run AI evaluation
-    const evaluation = await evaluateCode(code, language, title, description);
+    // Update task status to evaluating
+    await db
+      .update(tasks)
+      .set({ status: 'evaluating', updatedAt: new Date().toISOString() })
+      .where(eq(tasks.id, taskId));
+
+    // Run AI evaluation using task data
+    const evaluation = await evaluateCode(
+      taskData.codeContent,
+      taskData.language,
+      taskData.title,
+      taskData.description
+    );
 
     // Store evaluation in database
     const newEvaluation = await db
@@ -243,6 +264,18 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(responseEval, { status: 201 });
   } catch (error) {
     console.error('Evaluation error:', error);
+    
+    // If there was an error, try to mark task as failed
+    try {
+      const body = await request.clone().json();
+      if (body.taskId) {
+        await db
+          .update(tasks)
+          .set({ status: 'failed', updatedAt: new Date().toISOString() })
+          .where(eq(tasks.id, body.taskId));
+      }
+    } catch {}
+    
     return NextResponse.json(
       { error: 'Internal server error: ' + (error as Error).message },
       { status: 500 }
