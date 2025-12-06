@@ -53,7 +53,7 @@ export default function LoginPage() {
             <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
               <Code2 className="w-6 h-6 text-primary-foreground" />
             </div>
-            <span className="text-2xl font-bold">TaskEval</span>
+            <span className="text-2xl font-bold">AssessIQ</span>
           </Link>
         </div>
 

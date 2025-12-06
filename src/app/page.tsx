@@ -56,7 +56,7 @@ const testimonials = [
   {
     name: "Sarah Chen",
     role: "Software Engineer",
-    content: "TaskEval helped me identify blind spots in my code I never knew existed. The AI feedback is incredibly insightful.",
+    content: "AssessIQ helped me identify blind spots in my code I never knew existed. The AI feedback is incredibly insightful.",
     rating: 5,
   },
   {
@@ -68,7 +68,7 @@ const testimonials = [
   {
     name: "Emily Rodriguez",
     role: "Full Stack Developer",
-    content: "I use TaskEval before every code review. It catches issues and suggests improvements I might have missed.",
+    content: "I use AssessIQ before every code review. It catches issues and suggests improvements I might have missed.",
     rating: 5,
   },
 ];
@@ -84,7 +84,7 @@ export default function HomePage() {
               <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
                 <Code2 className="w-5 h-5 text-primary-foreground" />
               </div>
-              <span className="text-xl font-bold">TaskEval</span>
+              <span className="text-xl font-bold">AssessIQ</span>
             </Link>
             <div className="flex items-center gap-4">
               <ThemeToggle />
@@ -328,7 +328,7 @@ export default function HomePage() {
               Loved by Developers
             </h2>
             <p className="text-lg text-muted-foreground">
-              See what others are saying about TaskEval
+              See what others are saying about AssessIQ
             </p>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
@@ -366,7 +366,7 @@ export default function HomePage() {
             Ready to Improve Your Code?
           </h2>
           <p className="text-xl opacity-90 mb-8 max-w-2xl mx-auto">
-            Join thousands of developers who are writing better code with TaskEval.
+            Join thousands of developers who are writing better code with AssessIQ.
           </p>
           <Link href="/signup">
             <Button
@@ -389,10 +389,10 @@ export default function HomePage() {
               <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
                 <Code2 className="w-5 h-5 text-primary-foreground" />
               </div>
-              <span className="font-bold">TaskEval</span>
+              <span className="font-bold">AssessIQ</span>
             </div>
             <div className="flex items-center gap-6 text-sm text-muted-foreground">
-              <span>© 2024 TaskEval. All rights reserved.</span>
+              <span>© 2024 AssessIQ. All rights reserved.</span>
             </div>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Shield className="w-4 h-4" />

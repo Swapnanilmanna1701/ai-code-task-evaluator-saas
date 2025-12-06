@@ -1,4 +1,4 @@
-# TaskEval - AI-Powered Code Evaluation Platform
+# AssessIQ - AI-Powered Code Evaluation Platform
 
 <div align="center">
   <img src="https://img.shields.io/badge/Next.js-16.0.7-black" alt="Next.js" />
@@ -10,7 +10,7 @@
 
 ## 📋 Overview
 
-TaskEval is a production-ready SaaS application that provides AI-powered code evaluation and feedback. Submit your code, get instant analysis with scores, strengths, and actionable improvements. Built with Next.js 16, TypeScript, Supabase, and Google Gemini AI.
+AssessIQ is a production-ready SaaS application that provides AI-powered code evaluation and feedback. Submit your code, get instant analysis with scores, strengths, and actionable improvements. Built with Next.js 16, TypeScript, Supabase, and Google Gemini AI.
 
 ## ✨ Features
 
@@ -36,8 +36,8 @@ Before you begin, ensure you have the following installed:
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/yourusername/taskeval.git
-cd taskeval
+git clone https://github.com/yourusername/assessiq.git
+cd assessiq
 ```
 
 2. **Install dependencies**
@@ -327,5 +327,5 @@ For issues and questions:
 ---
 
 <div align="center">
-  Made with ❤️ by Swapnanil
+  Made with ❤️ by AssessIQ Team
 </div>

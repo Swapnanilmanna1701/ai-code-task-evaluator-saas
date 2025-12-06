@@ -6,6 +6,7 @@ import Link from "next/link";
 import { authClient, useSession } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,6 +25,7 @@ import {
   Menu,
   X,
   Plus,
+  Crown,
 } from "lucide-react";
 
 const navItems = [
@@ -31,6 +33,11 @@ const navItems = [
   { href: "/dashboard/submit", label: "Submit Task", icon: Plus },
   { href: "/dashboard/reports", label: "Past Reports", icon: History },
 ];
+
+interface PremiumStatus {
+  isPremium: boolean;
+  premiumSince: string | null;
+}
 
 export default function DashboardLayout({
   children,
@@ -41,12 +48,34 @@ export default function DashboardLayout({
   const router = useRouter();
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [premiumStatus, setPremiumStatus] = useState<PremiumStatus | null>(null);
 
   useEffect(() => {
     if (!isPending && !session?.user) {
       router.push("/login");
     }
   }, [session, isPending, router]);
+
+  useEffect(() => {
+    const fetchPremiumStatus = async () => {
+      if (session?.user) {
+        try {
+          const token = localStorage.getItem("bearer_token");
+          const response = await fetch("/api/subscription/status", {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (response.ok) {
+            const data = await response.json();
+            setPremiumStatus(data);
+          }
+        } catch (error) {
+          console.error("Failed to fetch premium status:", error);
+        }
+      }
+    };
+
+    fetchPremiumStatus();
+  }, [session]);
 
   const handleSignOut = async () => {
     const token = localStorage.getItem("bearer_token");
@@ -92,7 +121,7 @@ export default function DashboardLayout({
               <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
                 <Code2 className="w-5 h-5 text-primary-foreground" />
               </div>
-              <span className="text-xl font-bold hidden sm:inline">TaskEval</span>
+              <span className="text-xl font-bold hidden sm:inline">AssessIQ</span>
             </Link>
 
             {/* Desktop Navigation */}
@@ -117,6 +146,12 @@ export default function DashboardLayout({
 
             {/* User Menu */}
             <div className="flex items-center gap-2">
+              {premiumStatus?.isPremium && (
+                <Badge className="gap-1 bg-gradient-to-r from-yellow-400 to-orange-500 text-white border-0 hidden sm:flex">
+                  <Crown className="w-3 h-3" />
+                  Premium
+                </Badge>
+              )}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="relative h-10 w-10 rounded-full">
@@ -125,18 +160,47 @@ export default function DashboardLayout({
                         {userInitials}
                       </AvatarFallback>
                     </Avatar>
+                    {premiumStatus?.isPremium && (
+                      <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center border-2 border-white dark:border-slate-900">
+                        <Crown className="w-3 h-3 text-white" />
+                      </div>
+                    )}
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-56" align="end" forceMount>
                   <DropdownMenuLabel className="font-normal">
                     <div className="flex flex-col space-y-1">
-                      <p className="text-sm font-medium leading-none">{session.user.name}</p>
+                      <div className="flex items-center gap-2">
+                        <p className="text-sm font-medium leading-none">{session.user.name}</p>
+                        {premiumStatus?.isPremium && (
+                          <Badge className="gap-1 bg-gradient-to-r from-yellow-400 to-orange-500 text-white border-0 text-xs px-1.5 py-0">
+                            <Crown className="w-2.5 h-2.5" />
+                            Premium
+                          </Badge>
+                        )}
+                      </div>
                       <p className="text-xs leading-none text-muted-foreground">
                         {session.user.email}
                       </p>
+                      {premiumStatus?.isPremium && premiumStatus.premiumSince && (
+                        <p className="text-xs leading-none text-muted-foreground">
+                          Member since {new Date(premiumStatus.premiumSince).toLocaleDateString()}
+                        </p>
+                      )}
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
+                  {!premiumStatus?.isPremium && (
+                    <>
+                      <DropdownMenuItem asChild className="cursor-pointer">
+                        <Link href="/dashboard/payment/upgrade" className="flex items-center">
+                          <Crown className="mr-2 h-4 w-4 text-primary" />
+                          Upgrade to Premium
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                    </>
+                  )}
                   <DropdownMenuItem onClick={handleSignOut} className="text-red-600 cursor-pointer">
                     <LogOut className="mr-2 h-4 w-4" />
                     Sign out

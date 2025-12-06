@@ -6,7 +6,7 @@ import Script from "next/script";
 import { ThemeProvider } from "@/components/theme-provider";
 
 export const metadata: Metadata = {
-  title: "TaskEval - AI-Powered Code Evaluation",
+  title: "AssessIQ - AI-Powered Code Evaluation",
   description: "Submit your coding tasks and receive AI-powered evaluation with scores, strengths, and actionable improvement suggestions.",
 };
 
