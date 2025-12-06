@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { ThemeToggle } from "@/components/theme-toggle";
 import {
   Code2,
   Sparkles,
@@ -15,7 +16,8 @@ import {
   FileCode,
   TrendingUp,
   Lock,
-  CreditCard,
+  Crown,
+  Infinity,
 } from "lucide-react";
 
 const features = [
@@ -37,7 +39,7 @@ const features = [
   {
     icon: Lock,
     title: "Unlock Details",
-    description: "Pay to access comprehensive detailed feedback and recommendations.",
+    description: "Upgrade to Premium for unlimited access to detailed feedback reports.",
   },
 ];
 
@@ -45,7 +47,7 @@ const benefits = [
   "Score from 0-100 based on code quality",
   "Identify strengths in your code",
   "Get specific improvement suggestions",
-  "Receive detailed analysis (premium)",
+  "Unlimited detailed feedback (Premium)",
   "Track your progress over time",
   "Support for 15+ languages",
 ];
@@ -85,6 +87,7 @@ export default function HomePage() {
               <span className="text-xl font-bold">TaskEval</span>
             </Link>
             <div className="flex items-center gap-4">
+              <ThemeToggle />
               <Link href="/login">
                 <Button variant="ghost">Sign In</Button>
               </Link>
@@ -231,7 +234,7 @@ export default function HomePage() {
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Simple Pricing</h2>
             <p className="text-lg text-muted-foreground">
-              Free preview • Pay only for detailed reports
+              Free preview • One-time payment for unlimited access
             </p>
           </div>
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
@@ -264,15 +267,21 @@ export default function HomePage() {
             </Card>
             <Card className="border-2 border-primary relative">
               <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                <Badge className="bg-primary">Most Popular</Badge>
+                <Badge className="gap-1 bg-gradient-to-r from-yellow-400 to-orange-500 text-white border-0">
+                  <Crown className="w-3 h-3" />
+                  Premium
+                </Badge>
               </div>
               <CardHeader>
-                <CardTitle className="text-2xl">Full Report</CardTitle>
-                <CardDescription>Complete detailed analysis</CardDescription>
+                <CardTitle className="text-2xl flex items-center gap-2">
+                  <Crown className="w-6 h-6 text-primary" />
+                  Premium Access
+                </CardTitle>
+                <CardDescription>Unlimited detailed reports</CardDescription>
                 <div className="text-4xl font-bold mt-4">
-                  $4.99
+                  $29.99
                   <span className="text-base font-normal text-muted-foreground">
-                    /report
+                    {" "}one-time
                   </span>
                 </div>
               </CardHeader>
@@ -280,10 +289,11 @@ export default function HomePage() {
                 <ul className="space-y-3">
                   {[
                     "Everything in Free",
-                    "Detailed code analysis",
-                    "Specific recommendations",
+                    "Unlimited detailed feedback",
+                    "All past & future reports",
+                    "Comprehensive code analysis",
                     "Performance optimization tips",
-                    "Lifetime access to report",
+                    "Lifetime access - pay once",
                   ].map((item, i) => (
                     <li key={i} className="flex items-center gap-2">
                       <CheckCircle2 className="w-4 h-4 text-green-500" />
@@ -293,10 +303,14 @@ export default function HomePage() {
                 </ul>
                 <Link href="/signup" className="block mt-6">
                   <Button className="w-full gap-2">
-                    <CreditCard className="w-4 h-4" />
-                    Unlock Full Reports
+                    <Crown className="w-4 h-4" />
+                    Start with Premium
                   </Button>
                 </Link>
+                <p className="text-xs text-center text-muted-foreground mt-3">
+                  <Infinity className="w-3 h-3 inline mr-1" />
+                  Better value than $4.99 per report
+                </p>
               </CardContent>
             </Card>
           </div>
