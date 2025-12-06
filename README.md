@@ -327,5 +327,5 @@ For issues and questions:
 ---
 
 <div align="center">
-  Made with ❤️ by TaskEval Team
+  Made with ❤️ by Swapnanil
 </div>
