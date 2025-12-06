@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Progress } from "@/components/ui/progress";
+import { toast } from "sonner";
 import {
   ArrowLeft,
   Sparkles,
@@ -57,6 +58,7 @@ export default function TaskDetailPage() {
   const [premiumStatus, setPremiumStatus] = useState<PremiumStatus | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isEvaluating, setIsEvaluating] = useState(false);
+  const [isGeneratingFeedback, setIsGeneratingFeedback] = useState(false);
   const [error, setError] = useState("");
 
   const taskId = params.id as string;
@@ -137,12 +139,60 @@ export default function TaskDetailPage() {
         throw new Error("Evaluation failed");
       }
 
+      toast.success("Evaluation completed successfully!");
+      
       // Refresh task data
       await fetchTaskData();
     } catch (err) {
       setError("Failed to run evaluation. Please try again.");
+      toast.error("Failed to run evaluation");
     } finally {
       setIsEvaluating(false);
+    }
+  };
+
+  const generateDetailedFeedback = async () => {
+    if (!evaluation) return;
+
+    setIsGeneratingFeedback(true);
+
+    try {
+      const token = localStorage.getItem("bearer_token");
+
+      const response = await fetch("/api/ai/feedback", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          evaluationId: evaluation.id,
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        if (error.code === "PREMIUM_REQUIRED") {
+          toast.error("Premium subscription required to generate feedback");
+          return;
+        }
+        throw new Error("Failed to generate feedback");
+      }
+
+      const data = await response.json();
+      
+      if (data.alreadyGenerated) {
+        toast.info("Detailed feedback already generated");
+      } else {
+        toast.success("Detailed feedback generated successfully!");
+      }
+
+      // Refresh task data to show new feedback
+      await fetchTaskData();
+    } catch (err) {
+      toast.error("Failed to generate detailed feedback");
+    } finally {
+      setIsGeneratingFeedback(false);
     }
   };
 
@@ -379,14 +429,47 @@ export default function TaskDetailPage() {
             </CardHeader>
             <CardContent>
               {hasDetailedFeedbackAccess ? (
-                <div className="prose prose-sm dark:prose-invert max-w-none">
+                <div className="space-y-4">
                   <div className="mb-4 p-3 bg-gradient-to-r from-yellow-400/10 to-orange-500/10 border border-yellow-400/20 rounded-lg flex items-center gap-2">
                     <Crown className="w-4 h-4 text-primary" />
                     <span className="text-xs font-medium">Premium Member - Unlimited Access to All Reports</span>
                   </div>
-                  <div className="whitespace-pre-wrap text-sm leading-relaxed">
-                    {evaluation.detailedFeedback}
-                  </div>
+                  
+                  {evaluation.detailedFeedback ? (
+                    <div className="prose prose-sm dark:prose-invert max-w-none">
+                      <div className="whitespace-pre-wrap text-sm leading-relaxed">
+                        {evaluation.detailedFeedback}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-center py-6">
+                      <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center">
+                        <Sparkles className="w-8 h-8 text-primary" />
+                      </div>
+                      <h3 className="font-semibold mb-2">Generate Detailed Feedback</h3>
+                      <p className="text-sm text-muted-foreground mb-4 max-w-md mx-auto">
+                        Get comprehensive AI-generated feedback with specific recommendations, code examples, and learning resources.
+                      </p>
+                      <Button 
+                        onClick={generateDetailedFeedback} 
+                        disabled={isGeneratingFeedback}
+                        className="gap-2"
+                        size="lg"
+                      >
+                        {isGeneratingFeedback ? (
+                          <>
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                            Generating Feedback...
+                          </>
+                        ) : (
+                          <>
+                            <Sparkles className="w-4 h-4" />
+                            Generate AI Feedback
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  )}
                 </div>
               ) : (
                 <div className="text-center py-6">

@@ -10,7 +10,7 @@ const genAI = new GoogleGenAI({
   apiKey: process.env.GOOGLE_GEMINI_API_KEY || '',
 });
 
-// Define schema for structured output
+// Define schema for structured output - NO detailedFeedback
 const evaluationSchema = {
   type: Type.OBJECT,
   description: 'Code evaluation result',
@@ -32,16 +32,11 @@ const evaluationSchema = {
       nullable: false,
       items: { type: Type.STRING },
     },
-    detailedFeedback: {
-      type: Type.STRING,
-      description: 'Comprehensive 3-4 paragraph analysis covering code quality, best practices, performance, and recommendations',
-      nullable: false,
-    },
   },
-  required: ['score', 'strengths', 'improvements', 'detailedFeedback'],
+  required: ['score', 'strengths', 'improvements'],
 };
 
-// AI Evaluation using Google Gemini API
+// AI Evaluation using Google Gemini API - WITHOUT detailed feedback
 async function evaluateCode(code: string, language: string | null, title: string, description: string | null) {
   const apiKey = process.env.GOOGLE_GEMINI_API_KEY;
 
@@ -53,7 +48,7 @@ async function evaluateCode(code: string, language: string | null, title: string
   try {
     const model = genAI.models.generateContent({
       model: 'gemini-2.0-flash',
-      contents: `You are an expert code reviewer and evaluator. Analyze the provided ${language || 'code'} code and provide a comprehensive evaluation.
+      contents: `You are an expert code reviewer and evaluator. Analyze the provided ${language || 'code'} code and provide a quick evaluation.
 
 Title: ${title}
 ${description ? `Description: ${description}` : ''}
@@ -77,7 +72,6 @@ Provide:
 - A score from 0-100 based on overall code quality
 - 4-5 specific strengths (what the code does well)
 - 3-4 specific improvement suggestions (actionable recommendations)
-- A detailed 3-4 paragraph feedback covering all aspects of the code
 
 Be specific, constructive, and helpful in your feedback.`,
       config: {
@@ -148,17 +142,10 @@ function generateMockEvaluation(code: string, language: string | null) {
   const strengths = shuffled(strengthOptions).slice(0, 4);
   const improvements = shuffled(improvementOptions).slice(0, 3);
 
-  const detailedFeedback = `Your ${language || 'code'} implementation demonstrates ${score >= 80 ? 'excellent' : score >= 70 ? 'good' : 'reasonable'} understanding of programming fundamentals. ${strengths[0]}. ${strengths[1]}.
-
-The code structure is ${score >= 75 ? 'well-organized' : 'adequate'} and follows ${score >= 80 ? 'many' : 'some'} best practices for ${language || 'the language'}. ${hasErrorHandling ? 'The inclusion of error handling shows attention to robustness.' : 'Consider adding error handling to make the code more robust.'} ${hasComments ? 'The comments help explain the logic.' : 'Adding comments would improve code maintainability.'}
-
-For improvement, ${improvements[0].toLowerCase()}. Additionally, ${improvements[1].toLowerCase()}. ${score >= 80 ? 'Overall, this is production-quality code with minor enhancements possible.' : 'With these improvements, the code would be more maintainable and professional.'} Consider reviewing the specific suggestions above to take your code to the next level.`;
-
   return {
     score,
     strengths,
     improvements,
-    detailedFeedback,
   };
 }
 
@@ -226,7 +213,7 @@ export async function POST(request: NextRequest) {
       .set({ status: 'evaluating', updatedAt: new Date().toISOString() })
       .where(eq(tasks.id, taskId));
 
-    // Run AI evaluation using task data
+    // Run AI evaluation - WITHOUT detailed feedback
     const evaluation = await evaluateCode(
       taskData.codeContent,
       taskData.language,
@@ -234,7 +221,7 @@ export async function POST(request: NextRequest) {
       taskData.description
     );
 
-    // Store evaluation in database
+    // Store evaluation in database WITHOUT detailed feedback
     const newEvaluation = await db
       .insert(evaluations)
       .values({
@@ -243,7 +230,7 @@ export async function POST(request: NextRequest) {
         score: evaluation.score,
         strengths: evaluation.strengths,
         improvements: evaluation.improvements,
-        detailedFeedback: evaluation.detailedFeedback,
+        detailedFeedback: null, // Will be generated later by premium users
         isPremiumUnlocked: false,
         createdAt: new Date().toISOString(),
       })
@@ -255,13 +242,8 @@ export async function POST(request: NextRequest) {
       .set({ status: 'completed', updatedAt: new Date().toISOString() })
       .where(eq(tasks.id, taskId));
 
-    // Return evaluation without detailed feedback (premium feature)
-    const responseEval = {
-      ...newEvaluation[0],
-      detailedFeedback: null,
-    };
-
-    return NextResponse.json(responseEval, { status: 201 });
+    // Return evaluation
+    return NextResponse.json(newEvaluation[0], { status: 201 });
   } catch (error) {
     console.error('Evaluation error:', error);
     
