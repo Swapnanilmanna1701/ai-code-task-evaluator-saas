@@ -20,6 +20,7 @@ import {
   Target,
   FileCode,
   RefreshCw,
+  Crown,
 } from "lucide-react";
 
 interface Task {
@@ -43,11 +44,17 @@ interface Evaluation {
   createdAt: string;
 }
 
+interface PremiumStatus {
+  isPremium: boolean;
+  premiumSince: string | null;
+}
+
 export default function TaskDetailPage() {
   const params = useParams();
   const router = useRouter();
   const [task, setTask] = useState<Task | null>(null);
   const [evaluation, setEvaluation] = useState<Evaluation | null>(null);
+  const [premiumStatus, setPremiumStatus] = useState<PremiumStatus | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isEvaluating, setIsEvaluating] = useState(false);
   const [error, setError] = useState("");
@@ -57,6 +64,8 @@ export default function TaskDetailPage() {
   const fetchTaskData = async () => {
     try {
       const token = localStorage.getItem("bearer_token");
+      
+      // Fetch task and evaluation
       const response = await fetch(`/api/tasks/${taskId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -70,6 +79,16 @@ export default function TaskDetailPage() {
       const data = await response.json();
       setTask(data.task);
       setEvaluation(data.evaluation);
+
+      // Fetch premium status
+      const premiumResponse = await fetch("/api/subscription/status", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (premiumResponse.ok) {
+        const premiumData = await premiumResponse.json();
+        setPremiumStatus(premiumData);
+      }
     } catch (err) {
       setError("Failed to load task details");
     } finally {
@@ -140,6 +159,9 @@ export default function TaskDetailPage() {
     if (score >= 60) return "Fair";
     return "Needs Improvement";
   };
+
+  // CRITICAL: Premium users get access to ALL detailed feedback
+  const hasDetailedFeedbackAccess = premiumStatus?.isPremium === true;
 
   if (isLoading) {
     return (
@@ -326,50 +348,67 @@ export default function TaskDetailPage() {
           </div>
 
           {/* Detailed Report / Premium */}
-          <Card className={!evaluation.isPremiumUnlocked ? "border-primary/50 bg-primary/5" : ""}>
+          <Card className={!hasDetailedFeedbackAccess ? "border-primary/50 bg-primary/5" : ""}>
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  {evaluation.isPremiumUnlocked ? (
+                  {hasDetailedFeedbackAccess ? (
                     <Sparkles className="w-5 h-5 text-primary" />
                   ) : (
                     <Lock className="w-5 h-5 text-primary" />
                   )}
                   <CardTitle className="text-lg">Detailed Feedback Report</CardTitle>
                 </div>
-                {!evaluation.isPremiumUnlocked && (
-                  <Badge className="bg-primary/10 text-primary">Premium</Badge>
+                {hasDetailedFeedbackAccess ? (
+                  <Badge className="gap-1 bg-gradient-to-r from-yellow-400 to-orange-500 text-white border-0">
+                    <Crown className="w-3 h-3" />
+                    Premium Access
+                  </Badge>
+                ) : (
+                  <Badge className="gap-1 bg-gradient-to-r from-yellow-400 to-orange-500 text-white border-0">
+                    <Crown className="w-3 h-3" />
+                    Premium Only
+                  </Badge>
                 )}
               </div>
               <CardDescription>
-                {evaluation.isPremiumUnlocked
-                  ? "Complete analysis and recommendations"
-                  : "Unlock the full detailed analysis"}
+                {hasDetailedFeedbackAccess
+                  ? "Complete analysis and recommendations - Premium Member Benefit"
+                  : "Unlock unlimited reports with Premium subscription"}
               </CardDescription>
             </CardHeader>
             <CardContent>
-              {evaluation.isPremiumUnlocked ? (
+              {hasDetailedFeedbackAccess ? (
                 <div className="prose prose-sm dark:prose-invert max-w-none">
+                  <div className="mb-4 p-3 bg-gradient-to-r from-yellow-400/10 to-orange-500/10 border border-yellow-400/20 rounded-lg flex items-center gap-2">
+                    <Crown className="w-4 h-4 text-primary" />
+                    <span className="text-xs font-medium">Premium Member - Unlimited Access to All Reports</span>
+                  </div>
                   <div className="whitespace-pre-wrap text-sm leading-relaxed">
                     {evaluation.detailedFeedback}
                   </div>
                 </div>
               ) : (
                 <div className="text-center py-6">
-                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
-                    <Lock className="w-8 h-8 text-primary" />
+                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center">
+                    <Crown className="w-8 h-8 text-white" />
                   </div>
-                  <h3 className="font-semibold mb-2">Unlock Full Report</h3>
+                  <h3 className="font-semibold mb-2">Upgrade to Premium</h3>
                   <p className="text-sm text-muted-foreground mb-4 max-w-md mx-auto">
-                    Get comprehensive feedback including detailed code analysis, specific recommendations,
-                    and actionable improvements.
+                    Get unlimited access to detailed feedback for ALL your code evaluations. 
+                    One-time payment of $29.99 unlocks lifetime access to every report.
                   </p>
-                  <Link href={`/dashboard/payment/${evaluation.id}`}>
-                    <Button className="gap-2">
-                      <CreditCard className="w-4 h-4" />
-                      Unlock for $4.99
-                    </Button>
-                  </Link>
+                  <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                    <Link href="/dashboard/payment/upgrade">
+                      <Button className="gap-2">
+                        <Crown className="w-4 h-4" />
+                        Unlock All Reports - $29.99
+                      </Button>
+                    </Link>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-3">
+                    Pay once • Unlimited reports forever • No recurring charges
+                  </p>
                 </div>
               )}
             </CardContent>

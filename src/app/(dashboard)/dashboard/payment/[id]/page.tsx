@@ -18,56 +18,35 @@ import {
   CheckCircle2,
   Loader2,
   Sparkles,
-  FileCode,
+  Crown,
+  Infinity,
 } from "lucide-react";
 
-interface Evaluation {
-  id: number;
-  taskId: number;
-  score: number | null;
-  isPremiumUnlocked: boolean;
-}
-
-interface Task {
-  id: number;
-  title: string;
-  language: string | null;
+interface PremiumStatus {
+  isPremium: boolean;
+  premiumSince: string | null;
 }
 
 export default function PaymentPage() {
   const params = useParams();
   const router = useRouter();
-  const [evaluation, setEvaluation] = useState<Evaluation | null>(null);
-  const [task, setTask] = useState<Task | null>(null);
+  const [premiumStatus, setPremiumStatus] = useState<PremiumStatus | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState("");
 
-  const evaluationId = params.id as string;
-
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchPremiumStatus = async () => {
       try {
         const token = localStorage.getItem("bearer_token");
         
-        // Fetch evaluation
-        const evalResponse = await fetch(`/api/evaluations?id=${evaluationId}`, {
+        const response = await fetch("/api/subscription/status", {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        if (!evalResponse.ok) throw new Error("Failed to fetch evaluation");
-        const evalData = await evalResponse.json();
-        setEvaluation(evalData);
-
-        // Fetch task
-        const taskResponse = await fetch(`/api/tasks?id=${evalData.taskId}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        if (taskResponse.ok) {
-          const taskData = await taskResponse.json();
-          setTask(taskData);
-        }
+        if (!response.ok) throw new Error("Failed to fetch premium status");
+        const data = await response.json();
+        setPremiumStatus(data);
       } catch (err) {
         setError("Failed to load payment details");
       } finally {
@@ -75,8 +54,8 @@ export default function PaymentPage() {
       }
     };
 
-    fetchData();
-  }, [evaluationId]);
+    fetchPremiumStatus();
+  }, []);
 
   const handlePayment = async () => {
     setIsProcessing(true);
@@ -85,44 +64,26 @@ export default function PaymentPage() {
     try {
       const token = localStorage.getItem("bearer_token");
 
-      // Create payment record
-      const paymentResponse = await fetch("/api/payments", {
+      // Simulate payment processing with dummy card
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
+      // Activate premium subscription
+      const response = await fetch("/api/subscription/activate", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          evaluationId: parseInt(evaluationId),
-          amount: 4.99,
+          amount: 29.99,
           currency: "USD",
-          status: "pending",
         }),
       });
 
-      if (!paymentResponse.ok) throw new Error("Failed to create payment");
-      const payment = await paymentResponse.json();
+      if (!response.ok) throw new Error("Payment failed");
 
-      // Simulate payment processing (in production, integrate with Stripe)
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      // Update payment status to completed
-      const updateResponse = await fetch(`/api/payments/${payment.id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          status: "completed",
-          stripePaymentId: `mock_${Date.now()}`,
-        }),
-      });
-
-      if (!updateResponse.ok) throw new Error("Payment failed");
-
-      // Redirect to task page with success
-      router.push(`/dashboard/task/${evaluation?.taskId}?unlocked=true`);
+      // Success! Redirect to dashboard
+      router.push("/dashboard?premium=activated");
     } catch (err) {
       setError("Payment failed. Please try again.");
       setIsProcessing(false);
@@ -138,18 +99,41 @@ export default function PaymentPage() {
     );
   }
 
-  if (evaluation?.isPremiumUnlocked) {
+  if (premiumStatus?.isPremium) {
     return (
       <div className="max-w-2xl mx-auto">
-        <Card>
+        <Card className="border-2 border-primary">
           <CardContent className="pt-6 text-center">
-            <CheckCircle2 className="w-16 h-16 mx-auto text-green-500 mb-4" />
-            <h2 className="text-2xl font-bold mb-2">Already Unlocked!</h2>
-            <p className="text-muted-foreground mb-6">
-              You already have access to the full report for this evaluation.
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center">
+              <Crown className="w-8 h-8 text-white" />
+            </div>
+            <h2 className="text-2xl font-bold mb-2">You&apos;re Already Premium!</h2>
+            <p className="text-sm text-muted-foreground mb-2">
+              Premium member since {new Date(premiumStatus.premiumSince || "").toLocaleDateString("en-US", { 
+                month: "long", 
+                day: "numeric",
+                year: "numeric" 
+              })}
             </p>
-            <Link href={`/dashboard/task/${evaluation.taskId}`}>
-              <Button>View Full Report</Button>
+            <p className="text-muted-foreground mb-6">
+              You have unlimited lifetime access to all detailed feedback reports.
+            </p>
+            <div className="flex flex-wrap gap-2 justify-center mb-6">
+              <Badge variant="secondary" className="gap-1">
+                <CheckCircle2 className="w-3 h-3" />
+                Unlimited Reports
+              </Badge>
+              <Badge variant="secondary" className="gap-1">
+                <Infinity className="w-3 h-3" />
+                Lifetime Access
+              </Badge>
+              <Badge variant="secondary" className="gap-1">
+                <Sparkles className="w-3 h-3" />
+                All Features
+              </Badge>
+            </div>
+            <Link href="/dashboard">
+              <Button size="lg">Back to Dashboard</Button>
             </Link>
           </CardContent>
         </Card>
@@ -160,78 +144,103 @@ export default function PaymentPage() {
   return (
     <div className="max-w-2xl mx-auto space-y-6">
       <div>
-        <Link href={evaluation ? `/dashboard/task/${evaluation.taskId}` : "/dashboard"}>
+        <Link href="/dashboard">
           <Button variant="ghost" size="sm" className="gap-2 mb-4">
             <ArrowLeft className="w-4 h-4" />
-            Back to Task
+            Back to Dashboard
           </Button>
         </Link>
-        <h1 className="text-3xl font-bold">Unlock Full Report</h1>
-        <p className="text-muted-foreground mt-1">
-          Get comprehensive AI feedback and recommendations
-        </p>
+        <div className="flex items-center gap-3 mb-2">
+          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center">
+            <Crown className="w-6 h-6 text-white" />
+          </div>
+          <div>
+            <h1 className="text-3xl font-bold">Upgrade to Premium</h1>
+            <p className="text-muted-foreground">One-time payment • Lifetime access</p>
+          </div>
+        </div>
       </div>
 
       <div className="grid gap-6">
         {/* Order Summary */}
-        <Card>
+        <Card className="border-2 border-primary">
           <CardHeader>
-            <CardTitle className="text-lg">Order Summary</CardTitle>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Crown className="w-5 h-5 text-primary" />
+              Premium Subscription
+            </CardTitle>
+            <CardDescription>Unlock all detailed feedback reports forever</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="flex items-start gap-4 mb-4">
-              <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
-                <FileCode className="w-6 h-6 text-primary" />
+            <div className="space-y-4">
+              <div className="flex items-center justify-between text-2xl font-bold">
+                <span>One-Time Payment</span>
+                <span className="text-primary">$29.99</span>
               </div>
-              <div className="flex-1">
-                <h3 className="font-medium">{task?.title || "Code Evaluation"}</h3>
-                <p className="text-sm text-muted-foreground">
-                  {task?.language || "Unknown"} • Score: {evaluation?.score}/100
-                </p>
-              </div>
-            </div>
-            <Separator className="my-4" />
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span>Full Report Access</span>
-                <span>$4.99</span>
-              </div>
-              <div className="flex justify-between text-sm text-muted-foreground">
-                <span>Includes</span>
-                <span>Lifetime access</span>
-              </div>
-              <Separator className="my-2" />
-              <div className="flex justify-between font-semibold">
-                <span>Total</span>
-                <span>$4.99 USD</span>
-              </div>
+              <Separator />
+              <ul className="space-y-3">
+                {[
+                  "Unlimited detailed feedback reports",
+                  "Access to all past and future evaluations",
+                  "Comprehensive code analysis",
+                  "Specific improvement recommendations",
+                  "Performance optimization tips",
+                  "Lifetime access - pay once, benefit forever",
+                ].map((item, index) => (
+                  <li key={index} className="flex items-center gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0" />
+                    <span className="text-sm">{item}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
           </CardContent>
         </Card>
 
-        {/* What's Included */}
+        {/* Value Proposition */}
         <Card>
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
               <Sparkles className="w-5 h-5 text-primary" />
-              What&apos;s Included
+              Why Go Premium?
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <ul className="space-y-3">
-              {[
-                "Detailed code analysis and feedback",
-                "Specific improvement recommendations",
-                "Performance optimization tips",
-                "Best practices suggestions",
-                "Lifetime access to this report",
-              ].map((item, index) => (
-                <li key={index} className="flex items-center gap-3">
-                  <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0" />
-                  <span className="text-sm">{item}</span>
-                </li>
-              ))}
-            </ul>
+            <div className="grid gap-4">
+              <div className="flex gap-3">
+                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <Infinity className="w-5 h-5 text-primary" />
+                </div>
+                <div>
+                  <h4 className="font-semibold mb-1">Unlimited Access</h4>
+                  <p className="text-sm text-muted-foreground">
+                    Get detailed feedback for every task you submit - no per-report charges.
+                  </p>
+                </div>
+              </div>
+              <div className="flex gap-3">
+                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <Sparkles className="w-5 h-5 text-primary" />
+                </div>
+                <div>
+                  <h4 className="font-semibold mb-1">Better Than $4.99 Per Report</h4>
+                  <p className="text-sm text-muted-foreground">
+                    Pay once and unlock all reports. Break even after just 6 evaluations.
+                  </p>
+                </div>
+              </div>
+              <div className="flex gap-3">
+                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <Shield className="w-5 h-5 text-primary" />
+                </div>
+                <div>
+                  <h4 className="font-semibold mb-1">Lifetime Guarantee</h4>
+                  <p className="text-sm text-muted-foreground">
+                    Your premium access never expires. One payment, forever premium.
+                  </p>
+                </div>
+              </div>
+            </div>
           </CardContent>
         </Card>
 
@@ -243,7 +252,7 @@ export default function PaymentPage() {
               Payment Details
             </CardTitle>
             <CardDescription>
-              Demo mode - no real payment will be processed
+              Demo mode - Use test card: 4242 4242 4242 4242
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -259,17 +268,18 @@ export default function PaymentPage() {
                 id="card"
                 placeholder="4242 4242 4242 4242"
                 disabled={isProcessing}
+                defaultValue="4242 4242 4242 4242"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="expiry">Expiry Date</Label>
-                <Input id="expiry" placeholder="MM/YY" disabled={isProcessing} />
+                <Input id="expiry" placeholder="MM/YY" disabled={isProcessing} defaultValue="12/25" />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="cvc">CVC</Label>
-                <Input id="cvc" placeholder="123" disabled={isProcessing} />
+                <Input id="cvc" placeholder="123" disabled={isProcessing} defaultValue="123" />
               </div>
             </div>
 
@@ -282,19 +292,19 @@ export default function PaymentPage() {
               {isProcessing ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  Processing...
+                  Processing Payment...
                 </>
               ) : (
                 <>
-                  <Lock className="w-4 h-4" />
-                  Pay $4.99 & Unlock Report
+                  <Crown className="w-4 h-4" />
+                  Activate Premium for $29.99
                 </>
               )}
             </Button>
 
             <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
               <Shield className="w-4 h-4" />
-              <span>Secure payment • 100% Money-back guarantee</span>
+              <span>Secure payment • 30-day money-back guarantee</span>
             </div>
           </CardContent>
         </Card>

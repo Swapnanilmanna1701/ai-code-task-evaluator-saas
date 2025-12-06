@@ -16,6 +16,7 @@ import {
   AlertCircle,
   ArrowRight,
   Sparkles,
+  Crown,
 } from "lucide-react";
 
 interface Task {
@@ -33,9 +34,15 @@ interface Stats {
   averageScore: number | null;
 }
 
+interface PremiumStatus {
+  isPremium: boolean;
+  premiumSince: string | null;
+}
+
 export default function DashboardPage() {
   const { data: session } = useSession();
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [premiumStatus, setPremiumStatus] = useState<PremiumStatus | null>(null);
   const [stats, setStats] = useState<Stats>({
     totalTasks: 0,
     completedTasks: 0,
@@ -48,6 +55,8 @@ export default function DashboardPage() {
     const fetchData = async () => {
       try {
         const token = localStorage.getItem("bearer_token");
+        
+        // Fetch tasks
         const response = await fetch("/api/tasks?limit=5", {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -69,8 +78,18 @@ export default function DashboardPage() {
             averageScore: null,
           });
         }
+
+        // Fetch premium status
+        const premiumResponse = await fetch("/api/subscription/status", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (premiumResponse.ok) {
+          const premiumData = await premiumResponse.json();
+          setPremiumStatus(premiumData);
+        }
       } catch (error) {
-        console.error("Failed to fetch tasks:", error);
+        console.error("Failed to fetch data:", error);
       } finally {
         setIsLoading(false);
       }
@@ -105,15 +124,31 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-8">
-      {/* Welcome Section */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      {/* Welcome Section with Premium Badge */}
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold">
-            Welcome back, {session?.user?.name?.split(" ")[0] || "Developer"}!
-          </h1>
+          <div className="flex items-center gap-3 mb-2">
+            <h1 className="text-3xl font-bold">
+              Welcome back, {session?.user?.name?.split(" ")[0] || "Developer"}!
+            </h1>
+            {premiumStatus?.isPremium && (
+              <Badge className="gap-1 bg-gradient-to-r from-yellow-400 to-orange-500 text-white border-0 text-sm px-2.5 py-1">
+                <Crown className="w-3.5 h-3.5" />
+                Premium Member
+              </Badge>
+            )}
+          </div>
           <p className="text-muted-foreground mt-1">
-            Ready to evaluate your code? Submit a task to get AI-powered feedback.
+            {premiumStatus?.isPremium 
+              ? "You have unlimited access to all detailed feedback reports!"
+              : "Ready to evaluate your code? Submit a task to get AI-powered feedback."
+            }
           </p>
+          {premiumStatus?.isPremium && premiumStatus.premiumSince && (
+            <p className="text-xs text-muted-foreground mt-1">
+              Premium member since {new Date(premiumStatus.premiumSince).toLocaleDateString("en-US", { month: "long", year: "numeric" })}
+            </p>
+          )}
         </div>
         <Link href="/dashboard/submit">
           <Button size="lg" className="gap-2">
@@ -122,6 +157,46 @@ export default function DashboardPage() {
           </Button>
         </Link>
       </div>
+
+      {/* Premium Upsell Card for Non-Premium Users */}
+      {!premiumStatus?.isPremium && !isLoading && (
+        <Card className="border-2 border-primary/50 bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-950/20 dark:to-orange-950/20">
+          <CardContent className="pt-6">
+            <div className="flex flex-col md:flex-row items-center gap-6">
+              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center flex-shrink-0">
+                <Crown className="w-8 h-8 text-white" />
+              </div>
+              <div className="flex-1 text-center md:text-left">
+                <h3 className="text-xl font-bold mb-2">Upgrade to Premium</h3>
+                <p className="text-muted-foreground mb-4">
+                  Get unlimited access to detailed feedback reports for all your code evaluations. 
+                  Pay once, benefit forever - just <strong>$29.99</strong> one-time payment.
+                </p>
+                <div className="flex flex-wrap gap-2 justify-center md:justify-start">
+                  <Badge variant="secondary" className="gap-1">
+                    <CheckCircle2 className="w-3 h-3" />
+                    Unlimited Reports
+                  </Badge>
+                  <Badge variant="secondary" className="gap-1">
+                    <CheckCircle2 className="w-3 h-3" />
+                    Lifetime Access
+                  </Badge>
+                  <Badge variant="secondary" className="gap-1">
+                    <CheckCircle2 className="w-3 h-3" />
+                    All Features
+                  </Badge>
+                </div>
+              </div>
+              <Link href="/dashboard/payment/upgrade">
+                <Button size="lg" className="gap-2">
+                  <Crown className="w-4 h-4" />
+                  Upgrade Now
+                </Button>
+              </Link>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Stats Cards */}
       <div className="grid gap-4 md:grid-cols-3">
