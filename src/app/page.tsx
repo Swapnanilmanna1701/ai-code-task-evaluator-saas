@@ -14,6 +14,7 @@ import { AnimatedGradientText } from "@/components/ui/animated-gradient-text";
 import { AuroraHeroBackground } from "@/components/ui/futuristic-hero-section";
 import { ModernPricingSection, PricingCardProps } from "@/components/ui/animated-glassy-pricing";
 import { Navbar } from "@/components/ui/mini-navbar";
+import { InteractiveRobotSpline } from "@/components/ui/interactive-3d-robot";
 import { cn } from "@/lib/utils";
 import {
   Code2,
@@ -378,25 +379,38 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="py-20 bg-primary text-primary-foreground">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Ready to Improve Your Code?
-          </h2>
-          <p className="text-xl opacity-90 mb-8 max-w-2xl mx-auto">
-            Join thousands of developers who are writing better code with AssessIQ.
-          </p>
-          <Link href="/signup">
-            <Button
-              size="lg"
-              variant="secondary"
-              className="text-lg px-8 gap-2"
-            >
-              Get Started for Free
-              <ArrowRight className="w-5 h-5" />
-            </Button>
-          </Link>
+      {/* CTA with 3D Robot */}
+      <section className="relative bg-gray-900 dark:bg-gray-950 overflow-hidden">
+        <div className="relative h-[500px] md:h-[600px]">
+          {/* 3D Robot Background */}
+          <InteractiveRobotSpline
+            scene="https://prod.spline.design/PyzDhpQ9E5f1E3MT/scene.splinecode"
+            className="absolute inset-0 z-0"
+          />
+          
+          {/* Content Overlay */}
+          <div className="absolute inset-0 z-10 flex flex-col items-center justify-center pointer-events-none px-4">
+            <div className="text-center max-w-2xl">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white drop-shadow-lg">
+                Ready to Improve Your Code?
+              </h2>
+              <p className="text-xl opacity-90 mb-8 text-gray-200 drop-shadow-md">
+                Join thousands of developers who are writing better code with AssessIQ.
+              </p>
+              <div className="pointer-events-auto">
+                <Link href="/signup">
+                  <Button
+                    size="lg"
+                    variant="secondary"
+                    className="text-lg px-8 gap-2"
+                  >
+                    Get Started for Free
+                    <ArrowRight className="w-5 h-5" />
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
