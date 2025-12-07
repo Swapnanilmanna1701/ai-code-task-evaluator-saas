@@ -8,6 +8,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { AIChatbot } from "@/components/ai-chatbot";
 import { TextHoverEffect, FooterBackgroundGradient } from "@/components/ui/hover-footer";
 import { TestimonialSlider } from "@/components/ui/testimonial-slider";
+import RadialOrbitalTimeline from "@/components/ui/radial-orbital-timeline";
 import {
   Code2,
   Sparkles,
@@ -30,6 +31,54 @@ import {
   Dribbble,
   Globe,
 } from "lucide-react";
+
+// Timeline data for How It Works section
+const howItWorksData = [
+  {
+    id: 1,
+    title: "Submit Code",
+    date: "Step 1",
+    content: "Upload any coding task in JavaScript, Python, TypeScript, and more. Our platform supports 15+ programming languages.",
+    category: "Input",
+    icon: FileCode,
+    relatedIds: [2],
+    status: "completed" as const,
+    energy: 100,
+  },
+  {
+    id: 2,
+    title: "AI Analysis",
+    date: "Step 2",
+    content: "Our AI evaluates your code for quality, best practices, efficiency, and potential improvements.",
+    category: "Processing",
+    icon: Sparkles,
+    relatedIds: [1, 3],
+    status: "completed" as const,
+    energy: 85,
+  },
+  {
+    id: 3,
+    title: "Get Feedback",
+    date: "Step 3",
+    content: "Receive a comprehensive score, identified strengths, and actionable improvement suggestions.",
+    category: "Output",
+    icon: TrendingUp,
+    relatedIds: [2, 4],
+    status: "in-progress" as const,
+    energy: 60,
+  },
+  {
+    id: 4,
+    title: "Unlock Details",
+    date: "Step 4",
+    content: "Upgrade to Premium for unlimited access to detailed feedback reports and advanced analytics.",
+    category: "Premium",
+    icon: Lock,
+    relatedIds: [3],
+    status: "pending" as const,
+    energy: 30,
+  },
+];
 
 const features = [
   {
@@ -196,35 +245,17 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* How It Works */}
+      {/* How It Works - Radial Orbital Timeline */}
       <section className="py-20 bg-slate-50 dark:bg-slate-950/50">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
+          <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">How It Works</h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Get professional code feedback in four simple steps
+              Get professional code feedback in four simple steps. Click on any node to explore.
             </p>
           </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {features.map((feature, index) => {
-              const Icon = feature.icon;
-              return (
-                <Card key={index} className="relative border-0 shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 hover:scale-105">
-                  <CardHeader>
-                    <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
-                      <Icon className="w-6 h-6 text-primary" />
-                    </div>
-                    <div className="absolute top-4 right-4 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-sm font-bold text-primary">
-                      {index + 1}
-                    </div>
-                    <CardTitle className="text-xl">{feature.title}</CardTitle>
-                    <CardDescription className="text-base">
-                      {feature.description}
-                    </CardDescription>
-                  </CardHeader>
-                </Card>
-              );
-            })}
+          <div className="max-w-5xl mx-auto">
+            <RadialOrbitalTimeline timelineData={howItWorksData} />
           </div>
         </div>
       </section>
