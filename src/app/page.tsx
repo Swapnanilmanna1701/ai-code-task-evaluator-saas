@@ -246,7 +246,7 @@ export default function HomePage() {
       </section>
 
       {/* How It Works - Radial Orbital Timeline */}
-      <section className="py-20 bg-slate-50 dark:bg-slate-950/50">
+      <section className="py-20 bg-slate-50 dark:bg-black">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">How It Works</h2>
