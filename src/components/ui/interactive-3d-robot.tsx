@@ -27,7 +27,7 @@ export function InteractiveRobotSpline({ scene, className }: InteractiveRobotSpl
         />
       </Suspense>
       {/* Overlay to hide "Built with Spline" watermark */}
-      <div className="absolute bottom-0 right-0 w-40 h-16 bg-gray-900 dark:bg-gray-950 pointer-events-none" />
+      <div className="absolute bottom-0 right-0 w-40 h-16 bg-black dark:bg-black pointer-events-none" />
     </div>
   );
 }
