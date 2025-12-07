@@ -190,7 +190,7 @@ export default function HomePage() {
             </Link>
           </div>
           <p className="text-sm text-muted-foreground mt-4">
-            No credit card required • Free evaluation preview
+            No credit card required Free evaluation preview
           </p>
         </div>
       </section>
