@@ -13,6 +13,7 @@ import RadialOrbitalTimeline from "@/components/ui/radial-orbital-timeline";
 import { AnimatedGradientText } from "@/components/ui/animated-gradient-text";
 import { AuroraHeroBackground } from "@/components/ui/futuristic-hero-section";
 import { ModernPricingSection, PricingCardProps } from "@/components/ui/animated-glassy-pricing";
+import { Navbar } from "@/components/ui/mini-navbar";
 import { cn } from "@/lib/utils";
 import {
   Code2,
@@ -230,31 +231,11 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white dark:from-black dark:to-slate-950">
-      {/* Header */}
-      <header className="sticky top-0 z-50 w-full border-b bg-white/80 backdrop-blur-sm dark:bg-black/80 dark:border-slate-800">
-        <div className="container mx-auto px-4">
-          <div className="flex h-16 items-center justify-between">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                <Code2 className="w-5 h-5 text-primary-foreground" />
-              </div>
-              <span className="text-xl font-bold">AssessIQ</span>
-            </Link>
-            <div className="flex items-center gap-4">
-              <ThemeToggle />
-              <Link href="/login">
-                <Button variant="ghost">Sign In</Button>
-              </Link>
-              <Link href="/signup">
-                <Button>Get Started</Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </header>
+      {/* New Mini Navbar */}
+      <Navbar />
 
       {/* Hero Section with Aurora Background */}
-      <AuroraHeroBackground className="py-20 md:py-32">
+      <AuroraHeroBackground className="py-20 md:py-32 pt-32 md:pt-40">
         <div className="container mx-auto px-4 text-center relative z-10">
           <AnimatedGradientText className="mb-4">
             <Sparkles className="w-4 h-4 mr-2" />
