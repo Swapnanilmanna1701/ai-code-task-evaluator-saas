@@ -528,9 +528,7 @@ export default function HomePage() {
             </div>
 
             {/* Copyright */}
-            <p className="text-center md:text-left text-gray-400">
-              © {new Date().getFullYear()} AssessIQ. All rights reserved.
-            </p>
+           
           </div>
         </div>
 
