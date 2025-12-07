@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { AuroraHeroBackground } from "@/components/ui/futuristic-hero-section";
 import { Loader2, Code2, Eye, EyeOff, CheckCircle2 } from "lucide-react";
 
 type ErrorTypes = Partial<Record<keyof typeof authClient.$ERROR_CODES, string>>;
@@ -75,18 +76,18 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 p-4">
+    <AuroraHeroBackground className="min-h-screen flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="flex items-center justify-center mb-8">
           <Link href="/" className="flex items-center gap-2">
             <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
               <Code2 className="w-6 h-6 text-primary-foreground" />
             </div>
-            <span className="text-2xl font-bold">AssessIQ</span>
+            <span className="text-2xl font-bold text-white">AssessIQ</span>
           </Link>
         </div>
 
-        <Card className="border-0 shadow-xl">
+        <Card className="border-0 shadow-xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm">
           <CardHeader className="space-y-1 pb-4">
             <CardTitle className="text-2xl font-bold text-center">Create an account</CardTitle>
             <CardDescription className="text-center">
@@ -194,6 +195,6 @@ export default function SignupPage() {
           </form>
         </Card>
       </div>
-    </div>
+    </AuroraHeroBackground>
   );
 }
