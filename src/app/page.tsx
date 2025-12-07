@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { AIChatbot } from "@/components/ai-chatbot";
 import { TextHoverEffect, FooterBackgroundGradient } from "@/components/ui/hover-footer";
+import { TestimonialSlider } from "@/components/ui/testimonial-slider";
 import {
   Code2,
   Sparkles,
@@ -64,22 +65,22 @@ const benefits = [
 
 const testimonials = [
   {
+    img: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop&crop=face",
+    quote: "AssessIQ helped me identify blind spots in my code I never knew existed. The AI feedback is incredibly insightful.",
     name: "Sarah Chen",
     role: "Software Engineer",
-    content: "AssessIQ helped me identify blind spots in my code I never knew existed. The AI feedback is incredibly insightful.",
-    rating: 5,
   },
   {
+    img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
+    quote: "As a student, this tool has been invaluable for improving my coding skills. The detailed reports are worth every penny.",
     name: "Marcus Johnson",
     role: "CS Student",
-    content: "As a student, this tool has been invaluable for improving my coding skills. The detailed reports are worth every penny.",
-    rating: 5,
   },
   {
+    img: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face",
+    quote: "I use AssessIQ before every code review. It catches issues and suggests improvements I might have missed.",
     name: "Emily Rodriguez",
     role: "Full Stack Developer",
-    content: "I use AssessIQ before every code review. It catches issues and suggests improvements I might have missed.",
-    rating: 5,
   },
 ];
 
@@ -390,31 +391,7 @@ export default function HomePage() {
               See what others are saying about AssessIQ
             </p>
           </div>
-          <div className="grid md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
-              <Card key={index} className="border-0 shadow-lg">
-                <CardContent className="pt-6">
-                  <div className="flex gap-1 mb-4">
-                    {[...Array(testimonial.rating)].map((_, i) => (
-                      <Star
-                        key={i}
-                        className="w-5 h-5 fill-yellow-400 text-yellow-400"
-                      />
-                    ))}
-                  </div>
-                  <p className="text-muted-foreground mb-4">
-                    &quot;{testimonial.content}&quot;
-                  </p>
-                  <div>
-                    <div className="font-semibold">{testimonial.name}</div>
-                    <div className="text-sm text-muted-foreground">
-                      {testimonial.role}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          <TestimonialSlider testimonials={testimonials} />
         </div>
       </section>
 
