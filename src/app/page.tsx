@@ -429,7 +429,7 @@ export default function HomePage() {
       </section>
 
       {/* New Hover Footer */}
-      <footer className="bg-slate-900/90 dark:bg-black relative h-fit  overflow-hidden">
+      <footer className="bg-slate-900/90 dark:bg-gradient-to-r from-black to-transparent z-[2] lg:via-gray-900/60 relative h-fit  overflow-hidden">
         <div className="max-w-7xl mx-auto p-14 z-40 relative">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 md:gap-8 lg:gap-12 pb-12">
             {/* Brand section */}
