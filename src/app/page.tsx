@@ -332,7 +332,7 @@ export default function HomePage() {
       </section>
 
       {/* Pricing */}
-      <section className="py-20 bg-slate-50 dark:bg-black">
+      <section className="py-20 bg-slate-50 dark:bg-slate-950/50">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Simple Pricing</h2>
