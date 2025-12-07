@@ -279,7 +279,7 @@ export function AIChatbot() {
                       "max-w-[85%] rounded-lg px-4 py-2.5 text-sm",
                       message.role === "user"
                         ? "bg-primary text-primary-foreground"
-                        : "bg-muted"
+                        : "bg-muted max-h-[300px] overflow-y-auto"
                     )}
                   >
                     <div className="whitespace-pre-wrap break-words">
