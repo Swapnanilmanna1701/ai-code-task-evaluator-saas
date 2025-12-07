@@ -509,7 +509,7 @@ export default function HomePage() {
             </div>
           </div>
 
-          <hr className="border-t border-gray-700 my-8" />
+          
 
           {/* Footer bottom */}
          
