@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { AIChatbot } from "@/components/ai-chatbot";
+import { TextHoverEffect, FooterBackgroundGradient } from "@/components/ui/hover-footer";
 import {
   Code2,
   Sparkles,
@@ -19,6 +20,14 @@ import {
   Lock,
   Crown,
   Infinity,
+  Mail,
+  Phone,
+  MapPin,
+  Facebook,
+  Instagram,
+  Twitter,
+  Dribbble,
+  Globe,
 } from "lucide-react";
 
 const features = [
@@ -72,6 +81,56 @@ const testimonials = [
     content: "I use AssessIQ before every code review. It catches issues and suggests improvements I might have missed.",
     rating: 5,
   },
+];
+
+// Footer data
+const footerLinks = [
+  {
+    title: "Product",
+    links: [
+      { label: "Features", href: "#" },
+      { label: "Pricing", href: "#" },
+      { label: "API Docs", href: "#" },
+      { label: "Changelog", href: "#" },
+    ],
+  },
+  {
+    title: "Support",
+    links: [
+      { label: "FAQs", href: "#" },
+      { label: "Help Center", href: "#" },
+      {
+        label: "Live Chat",
+        href: "#",
+        pulse: true,
+      },
+    ],
+  },
+];
+
+const contactInfo = [
+  {
+    icon: <Mail size={18} className="text-primary" />,
+    text: "hello@assessiq.com",
+    href: "mailto:hello@assessiq.com",
+  },
+  {
+    icon: <Phone size={18} className="text-primary" />,
+    text: "+1 (555) 123-4567",
+    href: "tel:+15551234567",
+  },
+  {
+    icon: <MapPin size={18} className="text-primary" />,
+    text: "San Francisco, CA",
+  },
+];
+
+const socialLinks = [
+  { icon: <Facebook size={20} />, label: "Facebook", href: "#" },
+  { icon: <Instagram size={20} />, label: "Instagram", href: "#" },
+  { icon: <Twitter size={20} />, label: "Twitter", href: "#" },
+  { icon: <Dribbble size={20} />, label: "Dribbble", href: "#" },
+  { icon: <Globe size={20} />, label: "Website", href: "#" },
 ];
 
 export default function HomePage() {
@@ -382,25 +441,105 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="py-12 border-t">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                <Code2 className="w-5 h-5 text-primary-foreground" />
+      {/* New Hover Footer */}
+      <footer className="bg-slate-900/90 dark:bg-[#0F0F11]/90 relative h-fit rounded-t-3xl overflow-hidden">
+        <div className="max-w-7xl mx-auto p-14 z-40 relative">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 md:gap-8 lg:gap-16 pb-12">
+            {/* Brand section */}
+            <div className="flex flex-col space-y-4">
+              <div className="flex items-center space-x-2">
+                <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                  <Code2 className="w-5 h-5 text-primary-foreground" />
+                </div>
+                <span className="text-white text-2xl font-bold">AssessIQ</span>
               </div>
-              <span className="font-bold">AssessIQ</span>
+              <p className="text-sm leading-relaxed text-gray-400">
+                AI-powered code evaluation platform that helps developers write better, more maintainable code.
+              </p>
             </div>
-            <div className="flex items-center gap-6 text-sm text-muted-foreground">
-              <span>© 2024 AssessIQ. All rights reserved.</span>
-            </div>
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Shield className="w-4 h-4" />
-              <span>Secure & Private</span>
+
+            {/* Footer link sections */}
+            {footerLinks.map((section) => (
+              <div key={section.title}>
+                <h4 className="text-white text-lg font-semibold mb-6">
+                  {section.title}
+                </h4>
+                <ul className="space-y-3">
+                  {section.links.map((link) => (
+                    <li key={link.label} className="relative">
+                      <a
+                        href={link.href}
+                        className="text-gray-400 hover:text-primary transition-colors"
+                      >
+                        {link.label}
+                      </a>
+                      {link.pulse && (
+                        <span className="absolute top-0 right-[-10px] w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+
+            {/* Contact section */}
+            <div>
+              <h4 className="text-white text-lg font-semibold mb-6">
+                Contact Us
+              </h4>
+              <ul className="space-y-4">
+                {contactInfo.map((item, i) => (
+                  <li key={i} className="flex items-center space-x-3">
+                    {item.icon}
+                    {item.href ? (
+                      <a
+                        href={item.href}
+                        className="text-gray-400 hover:text-primary transition-colors"
+                      >
+                        {item.text}
+                      </a>
+                    ) : (
+                      <span className="text-gray-400 hover:text-primary transition-colors">
+                        {item.text}
+                      </span>
+                    )}
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
+
+          <hr className="border-t border-gray-700 my-8" />
+
+          {/* Footer bottom */}
+          <div className="flex flex-col md:flex-row justify-between items-center text-sm space-y-4 md:space-y-0">
+            {/* Social icons */}
+            <div className="flex space-x-6 text-gray-400">
+              {socialLinks.map(({ icon, label, href }) => (
+                <a
+                  key={label}
+                  href={href}
+                  aria-label={label}
+                  className="hover:text-primary transition-colors"
+                >
+                  {icon}
+                </a>
+              ))}
+            </div>
+
+            {/* Copyright */}
+            <p className="text-center md:text-left text-gray-400">
+              © {new Date().getFullYear()} AssessIQ. All rights reserved.
+            </p>
+          </div>
         </div>
+
+        {/* Text hover effect */}
+        <div className="lg:flex hidden h-[30rem] -mt-52 -mb-36">
+          <TextHoverEffect text="AssessIQ" className="z-50" />
+        </div>
+
+        <FooterBackgroundGradient />
       </footer>
 
       {/* AI Chatbot */}
