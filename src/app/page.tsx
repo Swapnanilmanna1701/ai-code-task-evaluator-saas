@@ -512,24 +512,7 @@ export default function HomePage() {
           <hr className="border-t border-gray-700 my-8" />
 
           {/* Footer bottom */}
-          <div className="flex flex-col md:flex-row justify-between items-center text-sm space-y-4 md:space-y-0">
-            {/* Social icons */}
-            <div className="flex space-x-6 text-gray-400">
-              {socialLinks.map(({ icon, label, href }) => (
-                <a
-                  key={label}
-                  href={href}
-                  aria-label={label}
-                  className="hover:text-primary transition-colors"
-                >
-                  {icon}
-                </a>
-              ))}
-            </div>
-
-            {/* Copyright */}
-           
-          </div>
+         
         </div>
 
         {/* Text hover effect */}
