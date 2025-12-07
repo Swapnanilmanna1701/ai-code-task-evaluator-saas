@@ -174,12 +174,13 @@ export function AIChatbot() {
     <Card
       className={cn(
         "fixed z-50 shadow-2xl transition-all duration-300 flex flex-col",
+        "backdrop-blur-xl bg-white/70 dark:bg-slate-900/70 border border-white/20 dark:border-slate-700/50",
         isExpanded
           ? "bottom-4 right-4 left-4 top-4 md:left-auto md:top-4 md:w-[600px] md:h-[calc(100vh-32px)]"
           : "bottom-6 right-6 w-[380px] h-[520px]"
       )}
     >
-      <CardHeader className="p-4 border-b bg-gradient-to-r from-primary/10 to-primary/5 rounded-t-lg flex-shrink-0">
+      <CardHeader className="p-4 border-b border-white/20 dark:border-slate-700/50 bg-gradient-to-r from-primary/10 to-primary/5 backdrop-blur-sm rounded-t-lg flex-shrink-0">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
@@ -223,7 +224,7 @@ export function AIChatbot() {
         </div>
       </CardHeader>
 
-      <CardContent className="flex-1 flex flex-col p-0 overflow-hidden">
+      <CardContent className="flex-1 flex flex-col p-0 overflow-hidden backdrop-blur-sm">
         <ScrollArea className="flex-1 p-4" ref={scrollRef}>
           {messages.length === 0 ? (
             <div className="space-y-4">
@@ -316,7 +317,7 @@ export function AIChatbot() {
 
         <form
           onSubmit={handleSubmit}
-          className="p-4 border-t bg-background/95 flex-shrink-0"
+          className="p-4 border-t border-white/20 dark:border-slate-700/50 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm flex-shrink-0"
         >
           <div className="flex gap-2">
             <Input
