@@ -10,6 +10,7 @@ import { TextHoverEffect, FooterBackgroundGradient } from "@/components/ui/hover
 import { TestimonialSlider } from "@/components/ui/testimonial-slider";
 import RadialOrbitalTimeline from "@/components/ui/radial-orbital-timeline";
 import { AnimatedGradientText } from "@/components/ui/animated-gradient-text";
+import { AuroraHeroBackground } from "@/components/ui/futuristic-hero-section";
 import { cn } from "@/lib/utils";
 import {
   Code2,
@@ -211,11 +212,8 @@ export default function HomePage() {
         </div>
       </header>
 
-      {/* Hero Section with Grid Background */}
-      <section className="relative py-20 md:py-32 overflow-hidden">
-        {/* Grid Background */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] dark:bg-[linear-gradient(to_right,#ffffff08_1px,transparent_1px),linear-gradient(to_bottom,#ffffff08_1px,transparent_1px)]"></div>
-        
+      {/* Hero Section with Aurora Background */}
+      <AuroraHeroBackground className="py-20 md:py-32">
         <div className="container mx-auto px-4 text-center relative z-10">
           <AnimatedGradientText className="mb-4">
             <Sparkles className="w-4 h-4 mr-2" />
@@ -229,11 +227,11 @@ export default function HomePage() {
             </span>
             <ChevronRight className="ml-1 size-3 transition-transform duration-300 ease-in-out group-hover:translate-x-0.5" />
           </AnimatedGradientText>
-          <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6 max-w-4xl mx-auto">
+          <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6 max-w-4xl mx-auto text-white">
             Get Expert Feedback on Your Code in{" "}
             <span className="text-primary">Seconds</span>
           </h1>
-          <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+          <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
             Submit your coding tasks and receive AI-powered evaluation with scores,
             strengths, and actionable improvement suggestions.
           </p>
@@ -245,16 +243,16 @@ export default function HomePage() {
               </Button>
             </Link>
             <Link href="/login">
-              <Button size="lg" variant="outline" className="text-lg px-8">
+              <Button size="lg" variant="outline" className="text-lg px-8 border-white/30 text-white hover:bg-white/10">
                 Sign In
               </Button>
             </Link>
           </div>
-          <p className="text-sm text-muted-foreground mt-4">
+          <p className="text-sm text-gray-400 mt-4">
             No credit card required Free evaluation preview
           </p>
         </div>
-      </section>
+      </AuroraHeroBackground>
 
       {/* How It Works - Radial Orbital Timeline */}
       <section className="py-20 bg-slate-50 dark:bg-black">
