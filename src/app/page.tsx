@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -11,6 +12,7 @@ import { TestimonialSlider } from "@/components/ui/testimonial-slider";
 import RadialOrbitalTimeline from "@/components/ui/radial-orbital-timeline";
 import { AnimatedGradientText } from "@/components/ui/animated-gradient-text";
 import { AuroraHeroBackground } from "@/components/ui/futuristic-hero-section";
+import { ModernPricingSection, PricingCardProps } from "@/components/ui/animated-glassy-pricing";
 import { cn } from "@/lib/utils";
 import {
   Code2,
@@ -187,6 +189,45 @@ const socialLinks = [
 ];
 
 export default function HomePage() {
+  const router = useRouter();
+
+  // Pricing plans data synchronized with your app's pricing
+  const pricingPlans: PricingCardProps[] = [
+    { 
+      planName: 'Free', 
+      description: 'Perfect for quick evaluations', 
+      price: '0', 
+      priceLabel: '',
+      features: [
+        'Overall score (0-100)',
+        'Top 3 strengths',
+        'Top 3 improvements',
+        'Unlimited evaluations'
+      ], 
+      buttonText: 'Get Started Free', 
+      buttonVariant: 'secondary',
+      onButtonClick: () => router.push('/signup')
+    },
+    { 
+      planName: 'Premium', 
+      description: 'Unlimited detailed reports', 
+      price: '29.99', 
+      priceLabel: 'one-time',
+      features: [
+        'Everything in Free',
+        'Unlimited detailed feedback',
+        'All past & future reports',
+        'Comprehensive code analysis',
+        'Performance optimization tips',
+        'Lifetime access - pay once'
+      ], 
+      buttonText: 'Start with Premium', 
+      isPopular: true, 
+      buttonVariant: 'primary',
+      onButtonClick: () => router.push('/signup')
+    },
+  ];
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white dark:from-black dark:to-slate-950">
       {/* Header */}
@@ -331,93 +372,14 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Pricing */}
-      <section className="py-20 bg-slate-50 dark:bg-slate-950/50">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Simple Pricing</h2>
-            <p className="text-lg text-muted-foreground">
-              Free preview • One-time payment for unlimited access
-            </p>
-          </div>
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            <Card className="border-2">
-              <CardHeader>
-                <CardTitle className="text-2xl">Free Preview</CardTitle>
-                <CardDescription>Perfect for quick evaluations</CardDescription>
-                <div className="text-4xl font-bold mt-4">$0</div>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-3">
-                  {[
-                    "Overall score (0-100)",
-                    "Top 3 strengths",
-                    "Top 3 improvements",
-                    "Unlimited evaluations",
-                  ].map((item, i) => (
-                    <li key={i} className="flex items-center gap-2">
-                      <CheckCircle2 className="w-4 h-4 text-green-500" />
-                      <span className="text-sm">{item}</span>
-                    </li>
-                  ))}
-                </ul>
-                <Link href="/signup" className="block mt-6">
-                  <Button variant="outline" className="w-full">
-                    Get Started Free
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
-            <Card className="border-2 border-primary relative">
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                <Badge className="gap-1 bg-gradient-to-r from-yellow-400 to-orange-500 text-white border-0">
-                  <Crown className="w-3 h-3" />
-                  Premium
-                </Badge>
-              </div>
-              <CardHeader>
-                <CardTitle className="text-2xl flex items-center gap-2">
-                  <Crown className="w-6 h-6 text-primary" />
-                  Premium Access
-                </CardTitle>
-                <CardDescription>Unlimited detailed reports</CardDescription>
-                <div className="text-4xl font-bold mt-4">
-                  $29.99
-                  <span className="text-base font-normal text-muted-foreground">
-                    {" "}one-time
-                  </span>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-3">
-                  {[
-                    "Everything in Free",
-                    "Unlimited detailed feedback",
-                    "All past & future reports",
-                    "Comprehensive code analysis",
-                    "Performance optimization tips",
-                    "Lifetime access - pay once",
-                  ].map((item, i) => (
-                    <li key={i} className="flex items-center gap-2">
-                      <CheckCircle2 className="w-4 h-4 text-green-500" />
-                      <span className="text-sm">{item}</span>
-                    </li>
-                  ))}
-                </ul>
-                <Link href="/signup" className="block mt-6">
-                  <Button className="w-full gap-2">
-                    <Crown className="w-4 h-4" />
-                    Start with Premium
-                  </Button>
-                </Link>
-                <p className="text-xs text-center text-muted-foreground mt-3">
-                  <Infinity className="w-3 h-3 inline mr-1" />
-                  Better value than $4.99 per report
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
+      {/* New Animated Glassy Pricing Section */}
+      <section className="bg-slate-50 dark:bg-slate-950/50">
+        <ModernPricingSection
+          title="Simple Pricing"
+          subtitle="Free preview • One-time payment for unlimited access"
+          plans={pricingPlans}
+          showAnimatedBackground={true}
+        />
       </section>
 
       {/* Testimonials */}
