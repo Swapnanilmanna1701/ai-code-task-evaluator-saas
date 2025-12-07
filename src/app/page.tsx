@@ -423,7 +423,7 @@ export default function HomePage() {
           </div>
           
           {/* Gradient overlay for text readability on mobile */}
-          <div className="absolute inset-0 bg-gradient-to-r from-black via-black to-transparent z-[5] lg:via-gray-900/60" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black to-transparent z-[5] lg:via-gray-900/60" />
         </div>
       </section>
 
