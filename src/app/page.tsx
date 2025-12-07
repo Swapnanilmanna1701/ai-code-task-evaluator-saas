@@ -380,7 +380,7 @@ export default function HomePage() {
       </section>
 
       {/* CTA with 3D Robot */}
-      <section className="relative bg-gray-900 dark:bg-gray-950 overflow-hidden">
+      <section className="relative bg-gray-900 dark:bg-black overflow-hidden">
         <div className="relative min-h-[600px] md:min-h-[700px] lg:min-h-[800px]">
           {/* Content - Left/Center Side */}
           <div className="absolute inset-0 z-10 flex items-center">
