@@ -42,10 +42,10 @@ export const AuroraHeroBackground = ({
       {/* Content */}
       <div className="relative z-10">{children}</div>
 
-      {/* Stars Background */}
+      {/* Stars Background - tiny constant-sized particles */}
       <div className="absolute inset-0 z-0">
         <Canvas>
-          <Stars radius={50} count={2500} factor={4} fade speed={2} />
+          <Stars radius={100} count={5000} factor={1} fade speed={1} saturation={0} />
         </Canvas>
       </div>
     </motion.section>
@@ -105,7 +105,7 @@ export const AuroraHero = () => {
 
       <div className="absolute inset-0 z-0">
         <Canvas>
-          <Stars radius={50} count={2500} factor={4} fade speed={2} />
+          <Stars radius={100} count={5000} factor={1} fade speed={1} saturation={0} />
         </Canvas>
       </div>
     </motion.section>
