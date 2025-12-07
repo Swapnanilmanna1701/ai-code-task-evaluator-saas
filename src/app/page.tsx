@@ -91,7 +91,6 @@ const footerLinks = [
       { label: "Features", href: "#" },
       { label: "Pricing", href: "#" },
       { label: "API Docs", href: "#" },
-      { label: "Changelog", href: "#" },
     ],
   },
   {
