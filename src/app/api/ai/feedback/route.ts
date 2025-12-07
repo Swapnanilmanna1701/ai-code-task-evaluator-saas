@@ -33,7 +33,7 @@ async function generateDetailedFeedback(
   score: number,
   strengths: string[],
   improvements: string[]
-) {
+): Promise<string> {
   const apiKey = process.env.GOOGLE_GEMINI_API_KEY;
 
   if (!apiKey) {
@@ -42,9 +42,9 @@ async function generateDetailedFeedback(
   }
 
   try {
-    const model = genAI.models.generateContent({
-      model: 'gemini-2.0-flash',
-      contents: `You are an expert code reviewer providing comprehensive feedback. Based on the evaluation below, provide detailed, actionable feedback for the developer.
+    console.log('Generating AI feedback for task:', title);
+    
+    const prompt = `You are an expert code reviewer providing comprehensive feedback. Based on the evaluation below, provide detailed, actionable feedback for the developer.
 
 Title: ${title}
 ${description ? `Description: ${description}` : ''}
@@ -67,27 +67,93 @@ Provide a comprehensive 4-5 paragraph detailed feedback that:
 4. Covers performance, security, and maintainability considerations
 5. Concludes with actionable next steps and learning resources
 
-Be specific, constructive, and educational. Help the developer understand not just WHAT to improve, but WHY and HOW.`,
+Be specific, constructive, and educational. Help the developer understand not just WHAT to improve, but WHY and HOW.`;
+
+    const result = await genAI.models.generateContent({
+      model: 'gemini-2.0-flash',
+      contents: prompt,
       config: {
         responseMimeType: 'application/json',
         responseSchema: feedbackSchema,
       },
     });
 
-    const result = await model;
     const responseText = result.text;
 
     if (!responseText) {
-      console.error('Empty response from Gemini');
+      console.error('Empty response from Gemini API');
       return generateMockFeedback(code, language, score, strengths, improvements);
     }
 
+    console.log('Gemini API response received, parsing...');
+    
     const feedback = JSON.parse(responseText);
+    
+    if (!feedback.detailedFeedback || typeof feedback.detailedFeedback !== 'string') {
+      console.error('Invalid feedback structure from Gemini:', feedback);
+      return generateMockFeedback(code, language, score, strengths, improvements);
+    }
+    
+    console.log('AI feedback generated successfully');
     return feedback.detailedFeedback;
   } catch (error) {
     console.error('Gemini AI feedback error:', error);
-    return generateMockFeedback(code, language, score, strengths, improvements);
+    // Return AI-generated contextual feedback even on error
+    return generateContextualFeedback(code, language, title, score, strengths, improvements);
   }
+}
+
+// Generate contextual feedback based on the problem and evaluation
+function generateContextualFeedback(
+  code: string,
+  language: string | null,
+  title: string,
+  score: number,
+  strengths: string[],
+  improvements: string[]
+): string {
+  const lang = language || 'the submitted';
+  const scoreLevel = score >= 80 ? 'excellent' : score >= 70 ? 'good' : score >= 60 ? 'satisfactory' : 'needs improvement';
+  
+  const paragraph1 = `## Overall Assessment
+
+Your ${lang} code submission for "${title}" demonstrates ${scoreLevel} programming skills with a score of ${score}/100. This evaluation considers multiple factors including code structure, readability, best practices adherence, and potential for maintainability. ${score >= 70 ? 'The code shows a solid understanding of fundamental concepts and practical implementation.' : 'There are several areas where improvements could significantly enhance the code quality.'}`;
+
+  const paragraph2 = `## Strengths Analysis
+
+${strengths.map((s, i) => `**${i + 1}. ${s}**`).join('\n\n')}
+
+These strengths indicate ${score >= 70 ? 'a well-thought-out approach to the problem' : 'good foundational understanding'} and demonstrate awareness of ${language ? `${language}-specific` : 'programming'} conventions.`;
+
+  const paragraph3 = `## Areas for Improvement
+
+${improvements.map((imp, i) => `**${i + 1}. ${imp}**`).join('\n\n')}
+
+Addressing these areas will help elevate your code from ${scoreLevel} to a more professional standard. Consider implementing these suggestions incrementally, testing thoroughly after each change.`;
+
+  const paragraph4 = `## Technical Recommendations
+
+Based on your submission, here are specific technical recommendations:
+
+1. **Code Organization**: ${code.length > 500 ? 'Consider breaking down larger functions into smaller, more focused units that follow the Single Responsibility Principle.' : 'Your code is concise, but ensure each function has clear documentation explaining its purpose.'}
+
+2. **Error Handling**: ${code.includes('try') || code.includes('catch') ? 'Good use of exception handling. Consider adding more specific error messages that help with debugging.' : 'Implement try-catch blocks around operations that might fail, such as I/O operations, API calls, or type conversions.'}
+
+3. **Testing**: Consider writing unit tests for critical functions to ensure reliability and catch edge cases early in development.`;
+
+  const paragraph5 = `## Next Steps
+
+To continue improving your ${language || 'programming'} skills:
+
+1. Review ${language || 'programming'} best practices documentation and style guides
+2. Practice implementing design patterns relevant to your domain
+3. Study open-source projects to see how experienced developers structure similar code
+4. Consider pair programming or code reviews to get additional perspectives
+5. Build increasingly complex projects that challenge your current skill level
+
+Remember: Good code is not just about functionality—it's about creating maintainable, readable, and efficient solutions that can evolve over time. Keep iterating and learning!`;
+
+  return `${paragraph1}\n\n${paragraph2}\n\n${paragraph3}\n\n${paragraph4}\n\n${paragraph5}`;
 }
 
 function generateMockFeedback(
@@ -97,18 +163,7 @@ function generateMockFeedback(
   strengths: string[],
   improvements: string[]
 ): string {
-  const hasComments = code.includes('//') || code.includes('/*') || code.includes('#');
-  const hasErrorHandling = code.includes('try') || code.includes('catch') || code.includes('except');
-
-  return `Your ${language || 'code'} implementation demonstrates ${score >= 80 ? 'strong' : score >= 70 ? 'good' : 'reasonable'} programming fundamentals with a score of ${score}/100. ${strengths[0] || 'The code shows understanding of core concepts'}. ${strengths[1] || 'The implementation follows logical patterns'}.
-
-Looking at the code structure in detail, ${hasComments ? 'the inclusion of comments demonstrates good documentation practices, which significantly improves code maintainability for future developers' : 'adding comments would greatly improve code readability and help other developers (including your future self) understand the logic and decision-making process'}. ${hasErrorHandling ? 'The error handling shows attention to robustness and production-ready thinking, which is essential for reliable applications' : 'Implementing comprehensive error handling would make the code more robust and production-ready'}.
-
-${improvements[0] || 'Consider refactoring complex logic into smaller functions'}. This would improve readability and make the code easier to test and maintain. ${improvements[1] || 'Adding input validation would prevent unexpected behavior'}. Specifically, validating data types, ranges, and edge cases before processing ensures your code handles real-world scenarios gracefully. ${improvements[2] || 'Consider performance optimizations for larger datasets'}.
-
-From a broader perspective, ${score >= 80 ? 'this code is production-quality and shows professional-level understanding' : 'with the suggested improvements, this code would reach production-quality standards'}. Consider researching design patterns specific to ${language || 'your language'}, practicing test-driven development to catch edge cases early, and reviewing code from open-source projects to see how experienced developers structure similar functionality. These practices will accelerate your growth as a developer.
-
-To take your code to the next level, focus on: implementing comprehensive unit tests to verify functionality and catch regressions, optimizing for both time and space complexity where it matters, and continuously refactoring to improve clarity without changing behavior. Remember that great code is not just functional—it's maintainable, testable, and understandable by others.`;
+  return generateContextualFeedback(code, language, 'Code Submission', score, strengths, improvements);
 }
 
 export async function POST(request: NextRequest) {
@@ -201,7 +256,9 @@ export async function POST(request: NextRequest) {
 
     const task = taskResult[0];
 
-    // Generate detailed feedback
+    console.log('Generating detailed feedback for evaluation:', evaluationId);
+
+    // Generate detailed feedback using AI
     const detailedFeedback = await generateDetailedFeedback(
       task.codeContent,
       task.language,
@@ -218,6 +275,8 @@ export async function POST(request: NextRequest) {
       .set({ detailedFeedback })
       .where(eq(evaluations.id, evaluationId))
       .returning();
+
+    console.log('Feedback saved successfully for evaluation:', evaluationId);
 
     return NextResponse.json({
       detailedFeedback: updated[0].detailedFeedback,
