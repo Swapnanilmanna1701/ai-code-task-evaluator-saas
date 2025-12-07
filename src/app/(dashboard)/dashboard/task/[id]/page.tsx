@@ -154,11 +154,17 @@ export default function TaskDetailPage() {
   const generateDetailedFeedback = async () => {
     if (!evaluation) return;
 
+    const token = localStorage.getItem("bearer_token");
+    
+    if (!token) {
+      toast.error("Please log in to generate feedback");
+      router.push("/login");
+      return;
+    }
+
     setIsGeneratingFeedback(true);
 
     try {
-      const token = localStorage.getItem("bearer_token");
-
       const response = await fetch("/api/ai/feedback", {
         method: "POST",
         headers: {
@@ -170,17 +176,21 @@ export default function TaskDetailPage() {
         }),
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        const error = await response.json();
-        if (error.code === "PREMIUM_REQUIRED") {
+        if (data.code === "PREMIUM_REQUIRED") {
           toast.error("Premium subscription required to generate feedback");
           return;
         }
-        throw new Error("Failed to generate feedback");
+        if (response.status === 401) {
+          toast.error("Session expired. Please log in again.");
+          router.push("/login");
+          return;
+        }
+        throw new Error(data.error || "Failed to generate feedback");
       }
 
-      const data = await response.json();
-      
       if (data.alreadyGenerated) {
         toast.info("Detailed feedback already generated");
       } else {
@@ -190,6 +200,7 @@ export default function TaskDetailPage() {
       // Refresh task data to show new feedback
       await fetchTaskData();
     } catch (err) {
+      console.error("Feedback generation error:", err);
       toast.error("Failed to generate detailed feedback");
     } finally {
       setIsGeneratingFeedback(false);

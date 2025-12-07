@@ -269,10 +269,13 @@ export async function POST(request: NextRequest) {
       (evaluationData.improvements as string[]) || []
     );
 
-    // Update evaluation with detailed feedback
+    // Update evaluation with detailed feedback AND mark as premium unlocked
     const updated = await db
       .update(evaluations)
-      .set({ detailedFeedback })
+      .set({ 
+        detailedFeedback,
+        isPremiumUnlocked: true 
+      })
       .where(eq(evaluations.id, evaluationId))
       .returning();
 

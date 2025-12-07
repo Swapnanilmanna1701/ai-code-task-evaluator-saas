@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
-import { tasks, evaluations } from '@/db/schema';
+import { tasks, evaluations, user } from '@/db/schema';
 import { eq, and } from 'drizzle-orm';
 import { getCurrentUser } from '@/lib/auth';
 
@@ -9,8 +9,8 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const user = await getCurrentUser(request);
-    if (!user) {
+    const currentUser = await getCurrentUser(request);
+    if (!currentUser) {
       return NextResponse.json(
         { error: 'Authentication required', code: 'UNAUTHORIZED' },
         { status: 401 }
@@ -33,7 +33,7 @@ export async function GET(
     const taskResult = await db
       .select()
       .from(tasks)
-      .where(and(eq(tasks.id, taskId), eq(tasks.userId, user.id)))
+      .where(and(eq(tasks.id, taskId), eq(tasks.userId, currentUser.id)))
       .limit(1);
 
     if (taskResult.length === 0) {
@@ -45,11 +45,20 @@ export async function GET(
 
     const task = taskResult[0];
 
+    // Check if user is premium
+    const userData = await db
+      .select()
+      .from(user)
+      .where(eq(user.id, currentUser.id))
+      .limit(1);
+
+    const isPremiumUser = userData.length > 0 && Boolean(userData[0].isPremium);
+
     // Fetch related evaluation with user scope
     const evaluationResult = await db
       .select()
       .from(evaluations)
-      .where(and(eq(evaluations.taskId, taskId), eq(evaluations.userId, user.id)))
+      .where(and(eq(evaluations.taskId, taskId), eq(evaluations.userId, currentUser.id)))
       .limit(1);
 
     let evaluation = null;
@@ -57,7 +66,9 @@ export async function GET(
     if (evaluationResult.length > 0) {
       const evaluationData = evaluationResult[0];
       
-      // If evaluation exists but is not premium unlocked, exclude detailedFeedback
+      // Premium users OR unlocked evaluations can see detailedFeedback
+      const canSeeDetailedFeedback = isPremiumUser || evaluationData.isPremiumUnlocked;
+      
       evaluation = {
         id: evaluationData.id,
         taskId: evaluationData.taskId,
@@ -65,7 +76,7 @@ export async function GET(
         score: evaluationData.score,
         strengths: evaluationData.strengths,
         improvements: evaluationData.improvements,
-        detailedFeedback: evaluationData.isPremiumUnlocked 
+        detailedFeedback: canSeeDetailedFeedback 
           ? evaluationData.detailedFeedback 
           : null,
         isPremiumUnlocked: evaluationData.isPremiumUnlocked,
