@@ -9,6 +9,8 @@ import { AIChatbot } from "@/components/ai-chatbot";
 import { TextHoverEffect, FooterBackgroundGradient } from "@/components/ui/hover-footer";
 import { TestimonialSlider } from "@/components/ui/testimonial-slider";
 import RadialOrbitalTimeline from "@/components/ui/radial-orbital-timeline";
+import { AnimatedGradientText } from "@/components/ui/animated-gradient-text";
+import { cn } from "@/lib/utils";
 import {
   Code2,
   Sparkles,
@@ -30,6 +32,7 @@ import {
   Twitter,
   Dribbble,
   Globe,
+  ChevronRight,
 } from "lucide-react";
 
 // Timeline data for How It Works section
@@ -214,10 +217,18 @@ export default function HomePage() {
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] dark:bg-[linear-gradient(to_right,#ffffff08_1px,transparent_1px),linear-gradient(to_bottom,#ffffff08_1px,transparent_1px)]"></div>
         
         <div className="container mx-auto px-4 text-center relative z-10">
-          <Badge className="mb-4" variant="secondary">
-            <Sparkles className="w-3 h-3 mr-1" />
-            AI-Powered Code Evaluation
-          </Badge>
+          <AnimatedGradientText className="mb-4">
+            <Sparkles className="w-4 h-4 mr-2" />
+            <hr className="mx-2 h-4 w-px shrink-0 bg-gray-300" />
+            <span
+              className={cn(
+                `inline animate-gradient bg-gradient-to-r from-[#ffaa40] via-[#9c40ff] to-[#ffaa40] bg-[length:var(--bg-size)_100%] bg-clip-text text-transparent`,
+              )}
+            >
+              AI-Powered Code Evaluation
+            </span>
+            <ChevronRight className="ml-1 size-3 transition-transform duration-300 ease-in-out group-hover:translate-x-0.5" />
+          </AnimatedGradientText>
           <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6 max-w-4xl mx-auto">
             Get Expert Feedback on Your Code in{" "}
             <span className="text-primary">Seconds</span>
