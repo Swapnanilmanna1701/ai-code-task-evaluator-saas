@@ -398,7 +398,7 @@ export default function HomePage() {
                     <Link href="/signup">
                       <Button
                         size="lg"
-                        variant="primary"
+                        bgcolor="white"
                         className="text-lg px-8 gap-2"
 
                       >
