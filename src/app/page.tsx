@@ -444,7 +444,7 @@ export default function HomePage() {
       {/* New Hover Footer */}
       <footer className="bg-slate-900/90 dark:bg-[#0F0F11]/90 relative h-fit rounded-t-3xl overflow-hidden">
         <div className="max-w-7xl mx-auto p-14 z-40 relative">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 md:gap-8 lg:gap-16 pb-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 md:gap-8 lg:gap-12 pb-12">
             {/* Brand section */}
             <div className="flex flex-col space-y-4">
               <div className="flex items-center space-x-2">
@@ -461,20 +461,20 @@ export default function HomePage() {
             {/* Footer link sections */}
             {footerLinks.map((section) => (
               <div key={section.title}>
-                <h4 className="text-white text-lg font-semibold mb-6">
+                <h4 className="text-white text-sm font-semibold mb-3">
                   {section.title}
                 </h4>
-                <ul className="space-y-3">
+                <ul className="space-y-1.5">
                   {section.links.map((link) => (
                     <li key={link.label} className="relative">
                       <a
                         href={link.href}
-                        className="text-gray-400 hover:text-primary transition-colors"
+                        className="text-gray-400 hover:text-primary transition-colors text-xs"
                       >
                         {link.label}
                       </a>
                       {link.pulse && (
-                        <span className="absolute top-0 right-[-10px] w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+                        <span className="absolute top-0 right-[-10px] w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
                       )}
                     </li>
                   ))}
@@ -484,22 +484,22 @@ export default function HomePage() {
 
             {/* Contact section */}
             <div>
-              <h4 className="text-white text-lg font-semibold mb-6">
+              <h4 className="text-white text-sm font-semibold mb-3">
                 Contact Us
               </h4>
-              <ul className="space-y-4">
+              <ul className="space-y-2">
                 {contactInfo.map((item, i) => (
-                  <li key={i} className="flex items-center space-x-3">
-                    {item.icon}
+                  <li key={i} className="flex items-center space-x-2">
+                    <span className="[&>svg]:w-3.5 [&>svg]:h-3.5">{item.icon}</span>
                     {item.href ? (
                       <a
                         href={item.href}
-                        className="text-gray-400 hover:text-primary transition-colors"
+                        className="text-gray-400 hover:text-primary transition-colors text-xs"
                       >
                         {item.text}
                       </a>
                     ) : (
-                      <span className="text-gray-400 hover:text-primary transition-colors">
+                      <span className="text-gray-400 hover:text-primary transition-colors text-xs">
                         {item.text}
                       </span>
                     )}
