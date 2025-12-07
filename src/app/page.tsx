@@ -398,8 +398,9 @@ export default function HomePage() {
                     <Link href="/signup">
                       <Button
                         size="lg"
-                        variant="secondary"
+                        variant="primary"
                         className="text-lg px-8 gap-2"
+
                       >
                         Get Started for Free
                         <ArrowRight className="w-5 h-5" />
@@ -423,7 +424,7 @@ export default function HomePage() {
           </div>
           
           {/* Gradient overlay for text readability on mobile */}
-          <div className="absolute inset-0 bg-gradient-to-r from-black to-transparent z-[5] lg:via-gray-900/60" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black to-transparent z-[2] lg:via-gray-900/60" />
         </div>
       </section>
 
