@@ -415,7 +415,7 @@ export default function HomePage() {
           </div>
           
           {/* 3D Robot - Right Side */}
-          <div className="absolute inset-y-0 right-0 w-full lg:w-[60%] xl:w-[55%] h-full z-0">
+          <div className="absolute inset-y-0 dark:bg-black right-0 w-full lg:w-[60%] xl:w-[55%] h-full z-0">
             <InteractiveRobotSpline
               scene="https://prod.spline.design/PyzDhpQ9E5f1E3MT/scene.splinecode"
               className="w-full h-full"
