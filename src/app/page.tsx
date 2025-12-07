@@ -199,16 +199,16 @@ export default function HomePage() {
               </div>
             </div>
             <div className="relative">
-              <Card className="border-0 shadow-2xl">
-                <CardHeader className="bg-slate-900 text-white rounded-t-lg">
+              <Card className="border-2 border-border shadow-2xl bg-card">
+                <CardHeader className="bg-slate-900 dark:bg-slate-800 text-white rounded-t-lg border-b-2 border-slate-700">
                   <div className="flex items-center gap-2">
                     <div className="w-3 h-3 rounded-full bg-red-500" />
                     <div className="w-3 h-3 rounded-full bg-yellow-500" />
                     <div className="w-3 h-3 rounded-full bg-green-500" />
-                    <span className="ml-2 text-sm opacity-60">evaluation.json</span>
+                    <span className="ml-2 text-sm opacity-80 font-medium">evaluation.json</span>
                   </div>
                 </CardHeader>
-                <CardContent className="bg-slate-950 text-slate-50 p-6 rounded-b-lg font-mono text-sm">
+                <CardContent className="bg-slate-950 dark:bg-slate-900 text-slate-50 dark:text-slate-100 p-6 rounded-b-lg font-mono text-sm border-2 border-t-0 border-slate-700">
                   <pre className="overflow-x-auto">
 {`{
   "score": 85,
