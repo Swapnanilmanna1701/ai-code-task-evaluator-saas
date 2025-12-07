@@ -381,36 +381,49 @@ export default function HomePage() {
 
       {/* CTA with 3D Robot */}
       <section className="relative bg-gray-900 dark:bg-gray-950 overflow-hidden">
-        <div className="relative h-[500px] md:h-[600px]">
-          {/* 3D Robot Background */}
-          <InteractiveRobotSpline
-            scene="https://prod.spline.design/PyzDhpQ9E5f1E3MT/scene.splinecode"
-            className="absolute inset-0 z-0"
-          />
-          
-          {/* Content Overlay */}
-          <div className="absolute inset-0 z-10 flex flex-col items-center justify-center pointer-events-none px-4">
-            <div className="text-center max-w-2xl">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white drop-shadow-lg">
-                Ready to Improve Your Code?
-              </h2>
-              <p className="text-xl opacity-90 mb-8 text-gray-200 drop-shadow-md">
-                Join thousands of developers who are writing better code with AssessIQ.
-              </p>
-              <div className="pointer-events-auto">
-                <Link href="/signup">
-                  <Button
-                    size="lg"
-                    variant="secondary"
-                    className="text-lg px-8 gap-2"
-                  >
-                    Get Started for Free
-                    <ArrowRight className="w-5 h-5" />
-                  </Button>
-                </Link>
+        <div className="relative min-h-[600px] md:min-h-[700px] lg:min-h-[800px]">
+          {/* Content - Left/Center Side */}
+          <div className="absolute inset-0 z-10 flex items-center">
+            <div className="container mx-auto px-4">
+              <div className="grid lg:grid-cols-2 gap-8 items-center">
+                {/* Text Content - Centered on mobile, left on desktop */}
+                <div className="text-center lg:text-left max-w-xl mx-auto lg:mx-0 lg:pl-8">
+                  <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-white drop-shadow-lg">
+                    Ready to Improve Your Code?
+                  </h2>
+                  <p className="text-lg md:text-xl opacity-90 mb-8 text-gray-200 drop-shadow-md">
+                    Join thousands of developers who are writing better code with AssessIQ.
+                  </p>
+                  <div>
+                    <Link href="/signup">
+                      <Button
+                        size="lg"
+                        variant="secondary"
+                        className="text-lg px-8 gap-2"
+                      >
+                        Get Started for Free
+                        <ArrowRight className="w-5 h-5" />
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
+                
+                {/* Spacer for robot area on desktop */}
+                <div className="hidden lg:block" />
               </div>
             </div>
           </div>
+          
+          {/* 3D Robot - Right Side */}
+          <div className="absolute inset-y-0 right-0 w-full lg:w-[60%] xl:w-[55%] h-full z-0">
+            <InteractiveRobotSpline
+              scene="https://prod.spline.design/PyzDhpQ9E5f1E3MT/scene.splinecode"
+              className="w-full h-full"
+            />
+          </div>
+          
+          {/* Gradient overlay for text readability on mobile */}
+          <div className="absolute inset-0 bg-gradient-to-r from-gray-900 via-gray-900/80 to-transparent z-[5] lg:via-gray-900/60" />
         </div>
       </section>
 
