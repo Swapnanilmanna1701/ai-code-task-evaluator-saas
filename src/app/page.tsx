@@ -503,7 +503,7 @@ export default function HomePage() {
         </div>
 
         {/* Text hover effect */}
-        <div className="lg:flex hidden h-[30rem] mt-5 -mb-36">
+        <div className="lg:flex hidden h-[20rem] mt-5 -mb-36">
           <TextHoverEffect text="AssessIQ" className="z-50" />
         </div>
 
