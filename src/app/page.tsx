@@ -272,7 +272,7 @@ export default function HomePage() {
             </Link>
           </div>
           <p className="text-sm text-gray-400 mt-4">
-            No credit card required Free evaluation preview
+            No credit card required • Free evaluation preview
           </p>
         </div>
       </AuroraHeroBackground>
